@@ -46,3 +46,9 @@ Assembly code
 >>>  
 >>> str_c:  db "Hello, Students", 0 
 >>>         end 
+
+>>> import pyvisa
+>>> rm = pyvisa.ResourceManager()
+>>> rm.list_resources()
+>>> laser = rm.open_resource('GPIB0::20::INSTR')
+>>> print("Equipment ID: ",laser.query('*IDN?'))

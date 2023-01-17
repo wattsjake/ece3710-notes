@@ -1,7 +1,7 @@
 Creating project
 ================
 
-.. project::
+.. _project::
 
 #. 1) Open Silicon Labs IDE
 #. 2) Select "Project" -> "New Project" from menu

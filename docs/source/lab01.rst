@@ -1,4 +1,4 @@
-Debugging with an Silicon Labs IDE
+Debugging with Silicon Labs IDE
 ==========================================================
 
 .. _debugging:

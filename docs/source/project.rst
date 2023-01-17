@@ -18,5 +18,7 @@ Creating project
     *. Select the file location for the project
     *. Select "Project Type".
 
+#. 4) Click "Okay" to create the project
+
 
 

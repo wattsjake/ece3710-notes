@@ -1,5 +1,7 @@
 Debugging with an Integrated Development Environment (IDE)
-===============================================================================
+==========================================================
+
+.. _debugging:
 
 IMPORTANT: One of the most common sources of trouble that 
 students encounter comes from poor file organization. Create a 

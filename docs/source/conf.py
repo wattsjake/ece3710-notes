@@ -4,7 +4,7 @@
 
 project = 'ECE 3710'
 copyright = '2023, Watts'
-author = 'Jacob'
+author = 'Jacob Watts'
 
 release = '0.1'
 version = '0.1.0'

@@ -11,9 +11,12 @@ Creating project
   :height: 300
   :alt: Menu
 
-#. 3) Select "Silicon Labs C8051F380 MCU" as target
-#. 4) Select "C8051F380" as device
-#. 5) Select "C8051F380" as device
-#. 6) Select "C8051F380" as device
-#. 7) Select "C8051F380" as device
+#. 3) Under the table "Project"
+
+    *. Select "C8051F02x" as device family
+    *. Create a memerable name for the project
+    *. Select the file location for the project
+    *. Select "Project Type".
+
+
 

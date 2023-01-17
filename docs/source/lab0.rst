@@ -9,6 +9,8 @@ The second software package you will need is Keil PK51. This package contains th
 
 Both of these software packages are available at the following link:
 
+This is a link to a reference document for the `Silicon Labs`_.
+
 .. _Silicon Labs: https://www.silabs.com/developers/8-bit-8051-microcontroller-software-studio
 
 

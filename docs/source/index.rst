@@ -13,5 +13,5 @@ Contents
 
 .. toctree::
 
-   usage
-   api
+   lab0
+   lab01

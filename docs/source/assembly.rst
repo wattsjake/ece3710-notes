@@ -6,7 +6,7 @@ Assembly Language Programming (8051)
           contributing to this document.
 
 Introduction
-------------
+************
 
     "Do not pray for an easy life, pray for the strength to use the keyboard. - Bruce Lee"
 
@@ -15,7 +15,7 @@ The Assembly Language is a low level Language used to program microcongrollers a
 ----------------
 
 Jump, Loop, and Call Instructions
----------------------------------
+**********************************
 
 The 8051 has a number of instructions that allow you to jump to a specific location in the program.  The most common of these are the jump instructions.  The jump instructions are:
 
@@ -63,7 +63,7 @@ Write a program that uses a jump, loop, and call instruction.
 ----------------
 
 Bit Manipulation Instructions
------------------------------
+******************************
 
 The 8051 has a number of instructions that allow you to manipulate bits.  The most common of these are the bit manipulation instructions.  The bit manipulation instructions are:
 
@@ -94,6 +94,13 @@ Write a program that uses a bit manipulation instruction.
             RET
 
 ----------------
+
+Time Delay For Various 8051 Chips
+*********************************
+
+The 8051 has a delay instruction that allows you to delay for a specific amount of time.  The delay instruction is:
+
+    * **NOP**   - no operation
 
 
 

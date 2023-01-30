@@ -125,9 +125,9 @@ Write a program that uses a delay instruction.
 
             RET
 
-..Note:: The above code will delay for [250(1+1+1+1+2)]x1.085 us = 1500 x 1.085 us = 1627.5 us.
+.. Note:: The above code will delay for [250(1+1+1+1+2)]x1.085 us = 1500 x 1.085 us = 1627.5 us.
 
-..Warning:: If machine cycle timing is critical to your system design, make sure that you chekc the manufacture's data sheets for the device specification.
+.. Warning:: If machine cycle timing is critical to your system design, make sure that you chekc the manufacture's data sheets for the device specification.
 
 
 

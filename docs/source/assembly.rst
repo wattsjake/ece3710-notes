@@ -2,14 +2,14 @@
 Assembly Language Programming (8051)
 ************************************
 
-.. note:: This is a work in progress.  The information here is
+.. note:: This is a work in progress. The information here is
           incomplete and may be inaccurate.  Please help by
           contributing to this document.
 
 Introduction
 ************
 
-    "**Do not pray for an easy life, pray for the strength to use the keyboard.** - *Bruce Lee*"
+.. note:: "**Do not pray for an easy life, pray for the strength to use the keyboard.** - *Bruce Lee*"
 
     .. image:: images/bruce-lee.jpg
         :width: 500

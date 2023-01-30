@@ -2,6 +2,8 @@ TODO
 =====
 
 - add time delay example
+- fix contents under index.rst to not look so gross
+
 
 Completed
 =========

@@ -11,3 +11,11 @@ Example 3-3
 
 Write a program to (a) load the accumulator witht he value 55H, (b) complement the ACC 700 times.
 
+.. code-block:: assembly
+   :emphasize-lines: 3,5
+
+   def some_function():
+       interesting = False
+       print 'This line is highlighted.'
+       print 'This one is not...'
+       print '...but this one is.'

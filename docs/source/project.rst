@@ -6,10 +6,10 @@ Creating project
 #. Open Silicon Labs IDE
 #. Select "Project" -> "New Project" from menu
 
-.. image:: images/new_project_menu.PNG
-  :width: 800
-  :height: 300
-  :alt: Menu
+    .. image:: images/new_project_menu.PNG
+      :width: 800
+      :height: 300
+      :alt: Menu
 
 #. Under the table "Project"
 

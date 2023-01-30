@@ -7,8 +7,8 @@ Creating project
 #. Select "Project" -> "New Project" from menu
 
     .. image:: images/new_project_menu.PNG
-      :width: 800
-      :height: 300
+      :width: 500
+      :height: 200
       :alt: Menu
 
 #. Under the table "Project"

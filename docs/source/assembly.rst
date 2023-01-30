@@ -111,23 +111,24 @@ The 8051 has a delay instruction that allows you to delay for a specific amount 
 Example 1-3
 -----------
 
-Write a program that uses a delay instruction.
+Write a program that uses a delay instruction. Pg. 83
 
 .. code-block:: assembly
 
-    DELAY:  MOV R3, #250
+                            Machine Cycle
+    DELAY:  MOV R3, #250        1
 
-    HERE:   NOP
-            NOP
-            NOP
-            NOP
-            DJNZ R3, HERE
+    HERE:   NOP                 1
+            NOP                 1   
+            NOP                 1
+            NOP                 1   
+            DJNZ R3, HERE       2
 
-            RET
+            RET                 2
 
 .. Note:: The above code will delay for [250(1+1+1+1+2)]x1.085 us = 1500 x 1.085 us = 1627.5 us.
 
-.. Warning:: If machine cycle timing is critical to your system design, make sure that you chekc the manufacture's data sheets for the device specification.
+.. Warning:: If machine cycle timing is critical to your system design, make sure that you check the manufacture's data sheets for the device specification.
 
 
 

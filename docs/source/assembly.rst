@@ -5,6 +5,24 @@
           incomplete and may be inaccurate.  Please help by
           contributing to this document.
 
+Example 1-1
+-----------
+
+Write a program that loads FFH into all of the registers.
+
+..code-block:: assembly
+
+            MOV A, #FFH
+            MOV R0, A
+            MOV R1, A
+            MOV R2, A
+            MOV R3, A
+            MOV R4, A
+            MOV R5, A
+            MOV R6, A
+            MOV R7, A
+
+----------------
 
 Example 3-3
 -----------
@@ -19,3 +37,4 @@ Write a program to (a) load the accumulator witht he value 55H, (b) complement t
     AGAIN:  CPL A           ; complement the accumulator
             DJNZ R2, AGAIN  ; decrement R2 and jump to AGAIN if not zero
             DJNZ R3, LOOP   ; decrement R3 and jump to LOOP if not zero
+

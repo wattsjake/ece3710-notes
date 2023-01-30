@@ -18,8 +18,5 @@ Contents
 .. toctree::
 
    assembly
-   silicon_ide
-   project
-   lab0
-   lab01   
+   silicon_ide 
    example_rst

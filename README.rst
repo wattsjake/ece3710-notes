@@ -3,16 +3,13 @@
   :alt: Weber State University
 
 ******************
-Optical Frequency Domain Reflectometry (OFDR)
+ECE 3710 Embedded Systems Notes
 ******************
 
 .. _TODO: TODO.rst
 
 Link to TODO_
 
-
-This GitHub repository is the source for the documentation of the senior project of Mr. Jared and Mr. Watts. The documentation is hosted
-on GitHub.
 
 Read the tutorial here:
 

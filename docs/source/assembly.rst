@@ -10,10 +10,10 @@ Introduction
 
     "**Do not pray for an easy life, pray for the strength to use the keyboard.** - *Bruce Lee*"
 
-    .. image:: images/bruce_lee.png
-    :width: 500
-    :height: 350
-    :alt: Bruce
+    .. image:: images/bruce-lee.jpg
+        :width: 500
+        :height: 350
+        :alt: Bruce
 
 The Assembly Language is a low level Language used to program microcongrollers and other devices. It's importatn to understand the hardware you are working with becuase that determines the way the assembly is coded. 
 

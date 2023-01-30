@@ -10,7 +10,7 @@ Example 1-1
 
 Write a program that loads FFH into all of the registers.
 
-..code-block:: assembly
+.. code-block:: assembly
 
             MOV A, #FFH
             MOV R0, A

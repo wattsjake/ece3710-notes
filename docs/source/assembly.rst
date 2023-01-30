@@ -5,6 +5,9 @@
           incomplete and may be inaccurate.  Please help by
           contributing to this document.
 
-.. role:: strike
 
-An example of :strike:`strike through text`.
+Example 3-3
+-----------
+
+Write a program to (a) load the accumulator witht he value 55H, (b) complement the ACC 700 times.
+

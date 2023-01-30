@@ -1,9 +1,32 @@
-8051 Microcontroller Assembly Language Programming
+Assembly Language Programming (8051)
 ==================================================
 
 .. note:: This is a work in progress.  The information here is
           incomplete and may be inaccurate.  Please help by
           contributing to this document.
+
+Introduction
+------------
+
+    "Do not pray for an easy life, pray for the strength to use the keyboard. - Bruce Lee"
+
+The Assembly Language is a low level Language used to program microcongrollers and other devices. It's importatn to understand the hardware you are working with becuase that determines the way the assembly is coded. 
+
+
+Jump, Loop, and Call Instructions
+---------------------------------
+
+The 8051 has a number of instructions that allow you to jump to a specific location in the program.  The most common of these are the jump instructions.  The jump instructions are:
+
+    * JMP - unconditional jump
+    * JZ - jump if zero
+    * JNZ - jump if not zero
+    * JC - jump if carry
+    * JNC - jump if not carry
+    * JB - jump if bit set
+    * JNB - jump if bit not set
+    * JBC - jump if bit set and clear bit
+    * JNB - jump if bit not set and set bit
 
 Example 1-1
 -----------

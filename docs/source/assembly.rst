@@ -9,14 +9,14 @@ Assembly Language Programming (8051)
 Introduction
 ************
 
+The Assembly Language is a low level Language used to program microcongrollers and other devices. It's importatn to understand the hardware you are working with becuase that determines the way the assembly is coded.
+
 .. note:: "**Do not pray for an easy life, pray for the strength to use the keyboard.** - *Bruce Lee*"
 
     .. image:: images/bruce-lee.jpg
         :width: 500
         :height: 350
         :alt: Bruce
-
-The Assembly Language is a low level Language used to program microcongrollers and other devices. It's importatn to understand the hardware you are working with becuase that determines the way the assembly is coded. 
 
 ----------------
 
@@ -104,9 +104,30 @@ Write a program that uses a bit manipulation instruction.
 Time Delay For Various 8051 Chips
 *********************************
 
-The 8051 has a delay instruction that allows you to delay for a specific amount of time.  The delay instruction is:
+The 8051 has a delay instruction that allows you to delay for a specific amount of time. Each instruction will take a certain amount of time to execute.  The 8051 has a delay instruction that allows you to delay for a specific amount of time.  The delay instruction is:
 
     * **NOP**   - no operation
+
+Example 1-3
+-----------
+
+Write a program that uses a delay instruction.
+
+.. code-block:: assembly
+
+    DELAY:  MOV R3, #250
+
+    HERE:   NOP
+            NOP
+            NOP
+            NOP
+            DJNZ R3, HERE
+
+            RET
+
+..Note:: The above code will delay for [250(1+1+1+1+2)]x1.085 us = 1500 x 1.085 us = 1627.5 us.
+
+..Warning:: If machine cycle timing is critical to your system design, make sure that you chekc the manufacture's data sheets for the device specification.
 
 
 

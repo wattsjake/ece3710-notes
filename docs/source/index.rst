@@ -17,3 +17,4 @@ Contents
    lab01
    project
    assembly
+   example_rst

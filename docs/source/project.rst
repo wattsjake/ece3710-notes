@@ -20,5 +20,9 @@ Creating project
 
 #. 4) Click "Okay" to create the project
 
+.. role:: strike
+
+An example of :strike:`strike through text`.
+
 
 

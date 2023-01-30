@@ -16,3 +16,4 @@ Contents
    lab0
    lab01
    project
+   assembly

@@ -24,6 +24,21 @@ Write a program that loads FFH into all of the registers.
 
 ----------------
 
+Example 1-2
+-----------
+
+Write a program that links the switches to the LEDs.
+
+.. code-block:: assembly
+
+            MOV P1, #FFH
+            MOV P2, #00H
+    LOOP:   MOV A, P1
+            MOV P2, A
+            JMP LOOP
+
+----------------
+
 Example 3-3
 -----------
 

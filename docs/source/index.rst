@@ -13,8 +13,8 @@ Contents
 
 .. toctree::
 
-   lab0
-   lab01
-   project
    assembly
+   project
+   lab0
+   lab01   
    example_rst

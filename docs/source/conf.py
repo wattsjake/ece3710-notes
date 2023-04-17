@@ -6,7 +6,7 @@ project = 'ECE 3710'
 copyright = '2023, Watts'
 author = 'Jacob Watts'
 
-release = '0.1'
+release = '1.0'
 version = '0.1.0'
 
 # -- General configuration

@@ -120,6 +120,52 @@ Dependencies
 14. Game over if a laser burst hits the laser cannon or if an invader reaches the bottom row, with "GAME OVER" displayed until the start button is pressed
 15. Sound generated for firing laser cannon, destroying an invader, or game over, with different sounds for each event and a maximum length of 250 milliseconds.
 
+Theory of Operation
+*******************
+.. _theory_of_operation:
+
+
+Design Alternatives
+*******************
+.. _design_alternatives:
+
+Design Details
+##############
+.. _design_details:
+
+This section addresses the design in detail, both what it is and why. Enough
+information should be given so that someone with an engineering background could
+implement the design. For example, timing analysis, schematics and code snippets
+are an appropriate level of detail. Data sheets or software listings are not. That would
+be too much detail. Still, expect over half of your document (not counting the
+appendices) to be design details, so use subsections for clarity. 
+
+Testing
+#######
+.. _testing:
+
+This section has two main purposes. First to describe the tests that are used to verify
+the design meets the requirements, and second, to document the results of those
+tests for your implementation. State for each test: (a) the test procedure, (b) the
+observations to verify, (c) your observations, and (d) which requirements are
+applicable. Be sure each requirement is covered by at least one test. 
+
+Conclusion
+##########
+.. _conclusion:
+
+This section summarizes test results makes observations about the performance and
+functionality (or lack thereof) of the design. Also, not every design is optimal. It is
+likely that you have acquired some insight along the way that will improve the design
+for next time. This section is a good place to put that kind of information. 
+
+Appendices
+##########
+.. _appendices:
+
+This is the appropriate place to put items for reference only, such as software
+listings. 
+
 
 
 

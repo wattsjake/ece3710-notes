@@ -21,3 +21,4 @@ Contents
    lab01
    project
    introduction
+   assembly

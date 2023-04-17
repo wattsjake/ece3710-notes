@@ -124,10 +124,18 @@ Theory of Operation
 *******************
 .. _theory_of_operation:
 
+.. note::
+
+   Add information about the theory of operation here.
+
 
 Design Alternatives
 *******************
 .. _design_alternatives:
+
+.. note::
+
+   Add information about the design alternatives here.
 
 Design Details
 ##############

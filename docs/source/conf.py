@@ -3,11 +3,11 @@
 # -- Project information
 
 project = 'ECE 3710'
-copyright = '2023, Watts'
-author = 'Jacob Watts'
+copyright = '2023, Fernald & Watts'
+author = 'Jack Fernald & Jacob Watts'
 
 release = '1.0'
-version = '0.1.0'
+version = '0.1.1'
 
 # -- General configuration
 

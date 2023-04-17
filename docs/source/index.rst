@@ -17,9 +17,7 @@ Contents
 
 .. toctree::
 
-   lab0
-   lab01
-   project
-   introduction
-   assembly
    silicon_ide
+   project
+   assembly
+   

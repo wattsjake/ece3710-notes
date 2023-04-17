@@ -52,43 +52,73 @@ Requirements
 1. The system shall run on an external 9v DC supply.
 2. The system shall use a 64x128 pixel LCD.
 3. The system shall have a reset button, a start button and a fire button.
+
 4. The system shall have a potentiometer located near the bottom of the LCD to
 control the position of the laser cannon.
+
 5. The laser cannon shall be seven pixels high. The width shall be to 7, 9, 11 or 13
 pixels depending on the DIP switch.
+
 6. Invaders shall be 6-8 pixels high. Those on the front row shall be 10 pixels wide
 with 3 pixels between them. Those on the back row may be narrower.
+
 7. The system shall continually display a 4-digit score that tallies the number of
 aliens destroyed by the current player.
+
 8. When the start button is pressed, the score shall be set to zero and an initial
 wave of alien attackers shall commence (see #9, below).
+
 9. At the beginning of each wave, the display shall show (a) the laser cannon (at
 the bottom of the screen), and (b) 2 rows of 8 alien space invaders (arrayed on
 the left side of the screen). On the initial wave, the invaders shall be as far from
 the laser cannon as possible.
+
 10. Once the battle begins, the formation of invaders shall move to the right, firing
 lasers at random. When the invaders reach the side of the display, they shall
 move 8 pixels closer to the laser cannon and reverse direction.
+
 11. The invaders shall move left or right one pixel at a time. The movement speed of
 the invaders shall be roughly inversely proportional to the number of invaders on
 the screen.
+
 12. The system must be able to display up to 8 simultaneous laser bursts (i.e.
 projectiles) from the invaders and up to 4 simultaneous laser bursts from the
 player’s laser cannon. All laser bursts are one pixel in size and move at a
 uniform speed. To improve visibility, trailing pixels (up to 7) should be displayed.
+
 13. If a laser burst hits an invader, the invader shall be destroyed. If all invaders are
 destroyed, a new wave begins with the aliens arrayed 8 pixels closer than before
 (but no more than 16 pixels total), and the battle continues with the movement
 speed of the aliens increased.
+
 14. If a laser burst hits the laser cannon or if an invader reaches the bottom row (i.e.
 the row containing the laser cannon), the the game is over and the words GAME
 OVER shall appear until the start button is pressed.
+
 15. A sound shall be generated each time the laser cannon fires, each time an
 invader is destroyed or when the game is over. The sound for each of these
 three events shall be different and (except for game over) shall not exceed 250
 milliseconds.
 
+Dependencies
+************
+.. _dependencies:
 
+1. External 9v DC supply
+2. 64x128 pixel LCD
+3. Reset button, start button, fire button
+4. Potentiometer to control the position of the laser cannon
+5. Laser cannon with height of seven pixels and variable width of 7, 9, 11, or 13 pixels depending on the DIP switch
+6. Invaders with a height of 6-8 pixels and width of 10 pixels for front row and narrower for back row
+7. 4-digit score displayed continuously
+8. Initial wave of alien attackers when start button is pressed
+9. Display showing laser cannon and 2 rows of 8 alien space invaders on the left side of the screen at the beginning of each wave
+10. Invader formation moves to the right, fires lasers randomly, and reverses direction when reaching the side of the display
+11. Invaders move left or right one pixel at a time, with movement speed roughly inversely proportional to the number of invaders on the screen
+12. Display up to 8 simultaneous laser bursts from the invaders and up to 4 simultaneous laser bursts from the player's laser cannon
+13. New wave with aliens arrayed 8 pixels closer and increased movement speed when all invaders are destroyed
+14. Game over if a laser burst hits the laser cannon or if an invader reaches the bottom row, with "GAME OVER" displayed until the start button is pressed
+15. Sound generated for firing laser cannon, destroying an invader, or game over, with different sounds for each event and a maximum length of 250 milliseconds.
 
 
 

@@ -22,3 +22,4 @@ Contents
    project
    introduction
    assembly
+   silicon_ide

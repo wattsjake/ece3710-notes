@@ -25,8 +25,9 @@ wave of aliens that starts closer and moves faster.
         :width: 500
         :height: 350
         :alt: Space Invaders
+        :align: center
 
-Figure 1. Space InvadersTM
+      Figure 1. Space InvadersTM
 
 For this project, we use the LCD to display the laser cannon, the aliens and the
 score. Shields are optional. One pushbutton is used to start the game and the

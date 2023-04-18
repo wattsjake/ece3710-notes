@@ -88,6 +88,17 @@ Requirements
    invader is destroyed or when the game is over. The sound for each of these
    three events shall be different and (except for game over) shall not exceed 250
    milliseconds.
+16. When the start button is pressed, the display may also show four equally spaced
+   14x8 pixel shields. If a laser burst hits a shield, one pixel of that shield should be
+   removed.
+17. If the front row of space invaders ever overlaps the shields, the shields are
+   removed.
+18. At random times, a flying saucer may cross the screen behind the array of
+   invaders. Hitting the saucer with a laser burst scores 50 points.
+19. Use three or four rows of invaders instead of two.
+20. Use two images for the invaders and alternate (animate) them each time the
+   invaders move (See below).
+
 
 Dependencies
 ************
@@ -136,6 +147,32 @@ implement the design. For example, timing analysis, schematics and code snippets
 are an appropriate level of detail. Data sheets or software listings are not. That would
 be too much detail. Still, expect over half of your document (not counting the
 appendices) to be design details, so use subsections for clarity. 
+
+Sprite Texture Generation
+=========================
+.. _sprite_texture_generation:
+
+In Space Invaders, the sprite is a two-dimensional graphic representing the alien enemy characters that descend from the top of the screen. The sprite is made up of several pixels arranged in a specific pattern to create the appearance of an alien. There are two different types of sprites used in our game (shown below). As the aliens move across the screen, the sprite is animated to create the illusion of movement. The use of sprites in Space Invaders was an important aspect of the game's design, allowing for the creation of a large number of enemy characters on screen simultaneously while keeping the game running smoothly on the limited hardware of the time.
+
+    .. image:: images/invaders-sprites.drawio.png
+        :width: 500
+        :height: 350
+        :alt: Sprite 'UP' & 'DOWN'
+        :align: center
+
+      Figure 2. Space Invaders Sprite 'UP' & 'DOWN'
+
+In Space Invaders, the laser tank is a player-controlled sprite that moves horizontally across the bottom of the screen, firing a laser beam at the descending alien enemies. The size of the tank can be adjusted by changing the dip switches on the arcade game's circuit board, which can increase or decrease the tank's size by 7, 9, 11, or 13 pixels. This adjustment can significantly affect the gameplay experience, as a smaller tank can be more difficult to control but offers a smaller target for the enemy sprites, while a larger tank can be easier to maneuver but is also a larger target. The option to adjust the tank size via dip switches was a popular feature of the game among arcade operators and players, allowing for customization and variability in gameplay.
+
+    .. image:: images/invaders-laser.drawio.png
+        :width: 500
+        :height: 350
+        :alt: Sprite Laser Tank
+        :align: center
+
+      Figure 2. Space Invaders Sprite Laser Tank
+
+
 
 Testing
 #######

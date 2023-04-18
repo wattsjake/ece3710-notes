@@ -25,9 +25,9 @@ wave of aliens that starts closer and moves faster.
         :width: 500
         :height: 350
         :alt: Space Invaders
-        :align: center
+      
 
-      Figure 1. Space InvadersTM
+Figure 1. Space InvadersTM
 
 For this project, we use the LCD to display the laser cannon, the aliens and the
 score. Shields are optional. One pushbutton is used to start the game and the
@@ -160,7 +160,7 @@ In Space Invaders, the sprite is a two-dimensional graphic representing the alie
         :alt: Sprite 'UP' & 'DOWN'
         :align: center
 
-      Figure 2. Space Invaders Sprite 'UP' & 'DOWN'
+Figure 2. Space Invaders Sprite 'UP' & 'DOWN'
 
 In Space Invaders, the laser tank is a player-controlled sprite that moves horizontally across the bottom of the screen, firing a laser beam at the descending alien enemies. The size of the tank can be adjusted by changing the dip switches on the arcade game's circuit board, which can increase or decrease the tank's size by 7, 9, 11, or 13 pixels. This adjustment can significantly affect the gameplay experience, as a smaller tank can be more difficult to control but offers a smaller target for the enemy sprites, while a larger tank can be easier to maneuver but is also a larger target. The option to adjust the tank size via dip switches was a popular feature of the game among arcade operators and players, allowing for customization and variability in gameplay.
 
@@ -170,9 +170,23 @@ In Space Invaders, the laser tank is a player-controlled sprite that moves horiz
         :alt: Sprite Laser Tank
         :align: center
 
-      Figure 2. Space Invaders Sprite Laser Tank
+Figure 3. Space Invaders Sprite Laser Tank
 
+Sound Generation
+================
+.. _sound_generation:
 
+.. note::
+
+   Add information about the sound generation here.
+
+Hardware Schematic 
+==================
+.. _hardware_schematic:
+
+.. note::
+
+   Add information about the hardware schematic here.
 
 Testing
 #######

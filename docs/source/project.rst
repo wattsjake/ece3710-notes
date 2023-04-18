@@ -50,6 +50,10 @@ Requirements
 ************
 .. _requirements:
 
+.. note::
+
+   TODO: Fix the indentation of the requirements.
+
 1. The system shall run on an external 9v DC supply.
 2. The system shall use a 64x128 pixel LCD.
 3. The system shall have a reset button, a start button and a fire button.
@@ -149,7 +153,7 @@ be too much detail. Still, expect over half of your document (not counting the
 appendices) to be design details, so use subsections for clarity. 
 
 Sprite Texture Generation
-=========================
+*************************
 .. _sprite_texture_generation:
 
 In Space Invaders, the sprite is a two-dimensional graphic representing the alien enemy characters that descend from the top of the screen. The sprite is made up of several pixels arranged in a specific pattern to create the appearance of an alien. There are two different types of sprites used in our game (shown below). As the aliens move across the screen, the sprite is animated to create the illusion of movement. The use of sprites in Space Invaders was an important aspect of the game's design, allowing for the creation of a large number of enemy characters on screen simultaneously while keeping the game running smoothly on the limited hardware of the time.
@@ -173,7 +177,7 @@ In Space Invaders, the laser tank is a player-controlled sprite that moves horiz
 Figure 3. Space Invaders Sprite Laser Tank
 
 Sound Generation
-================
+****************
 .. _sound_generation:
 
 .. note::
@@ -182,7 +186,7 @@ Sound Generation
 
 
 Hardware Schematic 
-==================
+******************
 .. _hardware_schematic:
 
 .. note::

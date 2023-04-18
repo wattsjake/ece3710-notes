@@ -25,7 +25,7 @@ wave of aliens that starts closer and moves faster.
         :width: 500
         :height: 350
         :alt: Space Invaders
-      
+        :align: center
 
 Figure 1. Space InvadersTM
 
@@ -155,7 +155,7 @@ Sprite Texture Generation
 In Space Invaders, the sprite is a two-dimensional graphic representing the alien enemy characters that descend from the top of the screen. The sprite is made up of several pixels arranged in a specific pattern to create the appearance of an alien. There are two different types of sprites used in our game (shown below). As the aliens move across the screen, the sprite is animated to create the illusion of movement. The use of sprites in Space Invaders was an important aspect of the game's design, allowing for the creation of a large number of enemy characters on screen simultaneously while keeping the game running smoothly on the limited hardware of the time.
 
     .. image:: images/invaders-sprites.drawio.png
-        :width: 500
+        :width: 650
         :height: 350
         :alt: Sprite 'UP' & 'DOWN'
         :align: center
@@ -180,13 +180,21 @@ Sound Generation
 
    Add information about the sound generation here.
 
+
 Hardware Schematic 
 ==================
 .. _hardware_schematic:
 
 .. note::
 
-   Add information about the hardware schematic here.
+   Update the hardware schematic here.
+
+    .. image:: images/project02-space-invaders-schematic.png
+        :width: 500
+        :height: 350
+        :alt: 8051 Schematic
+        :align: center
+
 
 Testing
 #######

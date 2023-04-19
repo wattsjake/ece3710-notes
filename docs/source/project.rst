@@ -176,6 +176,91 @@ In Space Invaders, the laser tank is a player-controlled sprite that moves horiz
 
 Figure 3. Space Invaders Sprite Laser Tank
 
+Timers and Interrupts
+*********************************
+.. _timers_and_interrupts:
+
+The 8051 microcontroller has two 16-bit timers that can be used to generate delays, measure frequency, or create PWM signals. The microcontroller also has a watchdog timer to detect and recover from system faults. These timers are important features that provide precise timing and control in many applications.
+
+Timer 0
+-------
+.. _timer_0:
+
+Timer 0 is a 16-bit timer that is used to create delays in the Space Invaders game. The timer is configured using the following code found in the ``init.c`` file.
+
+.. code-block:: c
+
+   IE = 0x82; // Enable timer 0 interrupt
+   TL0 = -18432 >> 8; // Load timer 0 low byte
+   TH0 = -18432; // Load timer 0 high byte
+   TR0 = 1; // Start timer 0
+
+Timer 0 is used to trigger an interrupt every 10 milliseconds. Every time the timer 0 overflows it will trigger the following interrupt handler.
+
+.. code-block:: c
+
+   void interrupt_timer0(void)interrupt 1
+   {
+      TL0 = -18432 >> 8; //get high byte
+      TH0 = -18432; //get low byte
+
+      //if the timer is not zero, decrement it
+      if(timer0 != 0)
+      {
+         timer0--;
+      }
+      else
+      {
+         timer0 = 100;
+         timer0_flag = 1;
+      }
+   }
+
+.. note::
+
+   Add information about the timer 0 interrupt here.
+
+Timer 2
+-------
+.. _timer_2:
+
+Timer 2 is used for the ADC. The timer is configured using the following code found in the ``init.c`` file.
+
+.. code-block:: c
+
+   T2CON = 0x04;   // timer 2
+   RCAP2H = -1844 >> 8; //get high byte
+   RCAP2L = -1844; //get low byte
+
+Everytime the timer 2 overflows it will trigger the following interrupt handler.
+
+.. code-block:: c
+
+   void interrupt_adc(void)interrupt 15
+   {
+      AD0INT = 0; //clear ADC0 interrupt flag
+      adc_value = (ADC0H << 8) | ADC0L; //OR the two High and Low bits together
+      sum += adc_value; //continually sum the pot
+      count++; //add to count
+      
+      if(count >= 64)
+      {
+         avg = 0; //clear average
+         avg = (sum >> 6);
+         count = 0; //reset count
+         sum = 0; //reset sum
+         pot_flag = 1; //set pot flag}		
+      }	
+   }
+
+.. note::
+
+   Add information about the timer 2 interrupt here.
+
+Timer
+
+
+
 Sound Generation
 ****************
 .. _sound_generation:
@@ -192,6 +277,8 @@ Hardware Schematic
 .. note::
 
    Update the hardware schematic here.
+
+Here is an image of the hardware schematic. Details need to be added.
 
     .. image:: images/project02-space-invaders-schematic.png
         :width: 500

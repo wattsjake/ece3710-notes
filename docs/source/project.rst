@@ -72,29 +72,29 @@ Requirements
    the left side of the screen). On the initial wave, the invaders shall be as far from
    the laser cannon as possible.
 10. Once the battle begins, the formation of invaders shall move to the right, firing
-   lasers at random. When the invaders reach the side of the display, they shall
-   move 8 pixels closer to the laser cannon and reverse direction.
+    lasers at random. When the invaders reach the side of the display, they shall
+    move 8 pixels closer to the laser cannon and reverse direction.
 11. The invaders shall move left or right one pixel at a time. The movement speed of
-   the invaders shall be roughly inversely proportional to the number of invaders on
-   the screen.
+    the invaders shall be roughly inversely proportional to the number of invaders on
+    the screen.
 12. The system must be able to display up to 8 simultaneous laser bursts (i.e.
-   projectiles) from the invaders and up to 4 simultaneous laser bursts from the
-   player's laser cannon. All laser bursts are one pixel in size and move at a
-   uniform speed. To improve visibility, trailing pixels (up to 7) should be displayed.
+    projectiles) from the invaders and up to 4 simultaneous laser bursts from the
+    player's laser cannon. All laser bursts are one pixel in size and move at a
+    uniform speed. To improve visibility, trailing pixels (up to 7) should be displayed.
 13. If a laser burst hits an invader, the invader shall be destroyed. If all invaders are
-   destroyed, a new wave begins with the aliens arrayed 8 pixels closer than before
-   (but no more than 16 pixels total), and the battle continues with the movement
-   speed of the aliens increased.
+    destroyed, a new wave begins with the aliens arrayed 8 pixels closer than before
+    (but no more than 16 pixels total), and the battle continues with the movement
+    speed of the aliens increased.
 14. If a laser burst hits the laser cannon or if an invader reaches the bottom row (i.e.
-   the row containing the laser cannon), the the game is over and the words GAME
-   OVER shall appear until the start button is pressed.
+    the row containing the laser cannon), the the game is over and the words GAME
+    OVER shall appear until the start button is pressed.
 15. A sound shall be generated each time the laser cannon fires, each time an
-   invader is destroyed or when the game is over. The sound for each of these
-   three events shall be different and (except for game over) shall not exceed 250
-   milliseconds.
+    invader is destroyed or when the game is over. The sound for each of these
+    three events shall be different and (except for game over) shall not exceed 250
+    milliseconds.
 16. When the start button is pressed, the display may also show four equally spaced
-   14x8 pixel shields. If a laser burst hits a shield, one pixel of that shield should be
-   removed.
+    14x8 pixel shields. If a laser burst hits a shield, one pixel of that shield should be
+    removed.
 17. If the front row of space invaders ever overlaps the shields, the shields are
    removed.
 18. At random times, a flying saucer may cross the screen behind the array of

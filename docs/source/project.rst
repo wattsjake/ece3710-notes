@@ -50,10 +50,6 @@ Requirements
 ************
 .. _requirements:
 
-.. note::
-
-   TODO: Fix the indentation of the requirements.
-
 1. The system shall run on an external 9v DC supply.
 2. The system shall use a 64x128 pixel LCD.
 3. The system shall have a reset button, a start button and a fire button.

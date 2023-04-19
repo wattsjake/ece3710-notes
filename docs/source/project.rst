@@ -96,12 +96,12 @@ Requirements
     14x8 pixel shields. If a laser burst hits a shield, one pixel of that shield should be
     removed.
 17. If the front row of space invaders ever overlaps the shields, the shields are
-   removed.
+    removed.
 18. At random times, a flying saucer may cross the screen behind the array of
-   invaders. Hitting the saucer with a laser burst scores 50 points.
+    invaders. Hitting the saucer with a laser burst scores 50 points.
 19. Use three or four rows of invaders instead of two.
 20. Use two images for the invaders and alternate (animate) them each time the
-   invaders move (See below).
+    invaders move (See below).
 
 
 Dependencies
@@ -374,6 +374,165 @@ Appendices
 
 This is the appropriate place to put items for reference only, such as software
 listings. 
+
+Include Files
+*************
+.. _include_files:
+
+notes.h 
+-------
+.. _notes.h:
+
+The following code is for reference to the note.h file.
+
+.. code-block:: c
+
+   #define C0 84550
+   #define Cs0 79815
+   #define Db0 79815
+   #define D0 75335
+   #define Ds0 71075
+   #define Eb0 71075
+   #define E0 67107
+   #define F0 63326
+   #define Fs0 59792
+   #define Gb0 59792
+   #define G0 56424
+   #define Gs0 53251
+   #define Ab0 53251
+   #define A0 50269
+   #define As0 47440
+   #define Bb0 47440
+   #define B0 44781
+   #define C1 42275
+   #define Cs1 39896
+   #define Db1 39896
+   #define D1 37657
+   #define Ds1 35546
+   #define Eb1 35546
+   #define E1 33553
+   #define F1 31670
+   #define Fs1 29890
+   #define Gb1 29890
+   #define G1 28212
+   #define Gs1 26631
+   #define Ab1 26631
+   #define A1 25135
+   #define As1 23724
+   #define Bb1 23724
+   #define B1 22391
+   #define C2 21134
+   #define Cs2 19948
+   #define Db2 19948
+   #define D2 18829
+   #define Ds2 17773
+   #define Eb2 17773
+   #define E2 16775
+   #define F2 15833
+   #define Fs2 14945
+   #define Gb2 14945
+   #define G2 14106
+   #define Gs2 13314
+   #define Ab2 13314
+   #define A2 12567
+   #define As2 11862
+   #define Bb2 11862
+   #define B2 11196
+   #define C3 10568
+   #define Cs3 9975
+   #define Db3 9975
+   #define D3 9415
+   #define Ds3 8887
+   #define Eb3 8887
+   #define E3 8388
+   #define F3 7917
+   #define Fs3 7472
+   #define Gb3 7472
+   #define G3 7053
+   #define Gs3 6657
+   #define Ab3 6657
+   #define A3 6284
+   #define As3 5931
+   #define Bb3 5931
+   #define B3 5598
+   #define C4 5284
+   #define Cs4 4987
+   #define Db4 4987
+   #define D4 4707
+   #define Ds4 4443
+   #define Eb4 4443
+   #define E4 4194
+   #define F4 3958
+   #define Fs4 3736
+   #define Gb4 3736
+   #define G4 3527
+   #define Gs4 3329
+   #define Ab4 3329
+   #define A4 3142
+   #define As4 2966
+   #define Bb4 2966
+   #define B4 2799
+   #define C5 2642
+   #define Cs5 2494
+   #define Db5 2494
+   #define D5 2354
+   #define Ds5 2222
+   #define Eb5 2222
+   #define E5 2097
+   #define F5 1979
+   #define Fs5 1868
+   #define Gb5 1868
+   #define G5 1763
+   #define Gs5 1664
+   #define Ab5 1664
+   #define A5 1571
+   #define As5 1483
+   #define Bb5 1483
+   #define B5 1400
+   #define C6 1321
+   #define Cs6 1247
+   #define Db6 1247
+   #define D6 1177
+   #define Ds6 1111
+   #define Eb6 1111
+   #define E6 1048
+   #define F6 990
+   #define Fs6 934
+   #define Gb6 934
+   #define G6 882
+   #define Gs6 832
+   #define Ab6 832
+   #define A6 785
+   #define As6 741
+   #define Bb6 741
+   #define B6 700
+   #define C7 660
+   #define Cs7 623
+   #define Db7 623
+   #define D7 588
+   #define Ds7 555
+   #define Eb7 555
+   #define E7 524
+   #define F7 495
+   #define Fs7 467
+   #define Gb7 467
+   #define G7 441
+   #define Gs7 416
+   #define Ab7 416
+   #define A7 393
+   #define As7 371
+   #define Bb7 371
+   #define B7 350
+   #define C8 330
+   #define Cs8 312
+   #define Db8 312
+   #define D8 294
+   #define Ds8 278
+   #define Eb8 278
+
+.. note::
+
+   Add include files here.
 
 
 

@@ -242,7 +242,7 @@ Everytime the timer 2 overflows it will trigger the following interrupt handler.
       adc_value = (ADC0H << 8) | ADC0L; //OR the two High and Low bits together
       sum += adc_value; //continually sum the pot
       count++; //add to count
-      
+
       if(count >= 64)
       {
          avg = 0; //clear average
@@ -257,7 +257,39 @@ Everytime the timer 2 overflows it will trigger the following interrupt handler.
 
    Add information about the timer 2 interrupt here.
 
-Timer
+Timer 4
+-------
+.. _timer_4:
+
+Timer 4 is used for the ADC which generates the sound for the game. The timer is configured using the following code found in the ``init.c`` file.
+
+.. code-block:: c
+
+   DAC0CN = 0x94; //used for the DAC set to timer4 overflow left most 
+   T4CON = 0x04;
+   RCAP4H = 0;
+   RCAP4L = 0; 
+
+Everytime the timer 4 overflows it will trigger the following interrupt handler.
+
+.. code-block:: c
+
+   void interrupt_dac(void) interrupt 16
+   {
+      T4CON &= 0x7F; //clear the flag
+      DAC0H = ((sine[phase] - 128) * envelope >> 10) + 128;
+      if(phase<sizeof(sine)-1){phase++;}
+      else if (duration>0){
+         phase = 0;
+         duration--;
+         if(envelope>0){envelope--;}
+         if(duration == 0){RCAP4H = RCAP4L = 0;} //reset timer4 H and L to zero
+      }
+   }
+
+.. note::
+
+   Add information about the timer 4 interrupt here.
 
 
 
@@ -265,9 +297,39 @@ Sound Generation
 ****************
 .. _sound_generation:
 
+Timer 4 is used to generate the sound for the game. Please see the section on timers and interrupts for more information about the timer 4 interrupt. The sound is generated using a sine wave. The following code is used for the sound generation. 'notes.h' is a header file that contains the frequencies for the notes.
+
 .. note::
 
-   Add information about the sound generation here.
+   Add quicklink to the section on timers and interrupts here.
+
+.. code-block:: c
+
+   #include <notes.h>
+   //------------------- Sound Variables ------------------------
+   unsigned long duration = 0;		// number of cycles left to output
+   signed long envelope = 512;
+   code unsigned char sine[] = { 176, 217, 244, 254, 244, 217, 176, 128, 80, 39, 12, 2, 12, 39, 80, 128 };
+   unsigned char phase = sizeof(sine)-1;	// current point in sine to output
+
+   /* 	---------- Play Notes ----------
+	This function is used to play notes for the game.
+   */
+   void play_note(int note, int dur)
+   {
+      RCAP4H = -note >> 8;
+      RCAP4L = -note;
+      duration = (dur*1382L)/note;
+      envelope = 512;
+   }
+
+The following code is an example of how the sound is generated for the game.
+
+.. code-block:: c
+
+   if(fire == 0 && counter == 25563){
+      play_note(E5, 100);	
+   }
 
 
 Hardware Schematic 

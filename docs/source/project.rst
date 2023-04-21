@@ -16,7 +16,7 @@ video games. The goal is to defeat waves of alien invaders that zig-zag towards
 Earth with a laser cannon, and of course, to score as many points as possible
 doing it. The invaders have lasers too and they shoot them, more or less at
 random, at the laser cannon and the shields that have been deployed for the
-player’s defense. If the invaders reach Earth, the player loses. If the laser cannon
+player's defense. If the invaders reach Earth, the player loses. If the laser cannon
 is destroyed (either by laser fire or by contact), the aliens regroup and attack the
 next laser cannon. If all the aliens are destroyed, the player must face a new
 wave of aliens that starts closer and moves faster.

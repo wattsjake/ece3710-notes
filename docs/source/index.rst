@@ -16,7 +16,8 @@ Contents
 --------
 
 .. toctree::
- :maxdepth: 2
+   :maxdepth: 2
+   
    silicon_ide
    project
    assembly

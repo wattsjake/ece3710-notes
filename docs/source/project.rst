@@ -355,6 +355,14 @@ tests for your implementation. State for each test: (a) the test procedure, (b) 
 observations to verify, (c) your observations, and (d) which requirements are
 applicable. Be sure each requirement is covered by at least one test. 
 
+Rest, Start, and Fire Buttons
+-----------------------------
+.. _rest_start_and_fire_buttons:
+
+Requirements: The system shall have a reset button, a start button and a fire button.
+
+Test Procedure: Press the reset button, the start button, and the fire button. Check to see if the game resets, starts, and fires.
+
 Conclusion
 ##########
 .. _conclusion:

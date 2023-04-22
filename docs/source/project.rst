@@ -328,6 +328,7 @@ Testing the timer0 interrupt. By toggling the P1.0 pin we can see the interrupt 
    :alt: Timer0 Interrupt Scope
    :align: center
 
+From the image above we can see that the interrupt is triggered every 70 milliseconds. The interrupt is triggered at 14.3 kHz.
 
 
 Timer 2
@@ -402,7 +403,6 @@ Everytime the timer 4 overflows it will trigger the following interrupt handler.
    Add information about the timer 4 interrupt here.
 
 
-
 Sound Generation
 ****************
 .. _sound_generation:
@@ -416,7 +416,7 @@ Timer 4 is used to generate the sound for the game. Please see the section on ti
    :alt: Audio Amplifier
    :align: center
 
-
+This circuit takes advange of the NJM2113 IC for the audio amplifier. It also takes in the DAC0 output and amplifies it. The following code is used to generate the sound for the game.
 
 .. code-block:: c
 

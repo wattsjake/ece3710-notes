@@ -278,7 +278,6 @@ The **draw_army** function will create an array of invaders. Please refer to the
          :align: center
 
 
-
 Timers and Interrupts
 *********************************
 .. _timers_and_interrupts:
@@ -298,7 +297,7 @@ Timer 0 is a 16-bit timer that is used to create delays in the Space Invaders ga
    TH0 = -18432; // Load timer 0 high byte
    TR0 = 1; // Start timer 0
 
-Timer 0 is used to trigger an interrupt every 10 milliseconds. Every time the timer 0 overflows it will trigger the following interrupt handler.
+Timer 0 is used to trigger an interrupt every 70 milliseconds. Every time the timer 0 overflows it will trigger the following interrupt handler.
 
 .. code-block:: c
 
@@ -306,6 +305,8 @@ Timer 0 is used to trigger an interrupt every 10 milliseconds. Every time the ti
    {
       TL0 = -18432 >> 8; //get high byte
       TH0 = -18432; //get low byte
+
+      P1^=1;//used for debug
 
       //if the timer is not zero, decrement it
       if(timer0 != 0)
@@ -319,9 +320,13 @@ Timer 0 is used to trigger an interrupt every 10 milliseconds. Every time the ti
       }
    }
 
-.. note::
+Testing the timer0 interrupt. By toggling the P1.0 pin we can see the interrupt is working. The P1.0 pin is connected to an LED. The LED will toggle every time the interrupt is triggered. The LED was disconnected from the pin and a scope probe was connected. The following image shows the exact time the interrupt is triggered.
 
-   Add information about the timer 0 interrupt here.
+.. image:: images/scope_0.png
+   :width: 650
+   :height: 350
+   :alt: Timer0 Interrupt Scope
+   :align: center
 
 Timer 2
 -------

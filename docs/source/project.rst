@@ -369,11 +369,22 @@ Potentiometer
 -------------
 .. _potentiometer:
 
-a. **Test Procedure:** Turn the potentiometer to the left and to the right. Check to see if the tank moves left and right.
+a. **Test Procedure:** Turn the potentiometer to the left and to the right. Check to see if the laser cannon moves left and right.
 
-b. **Observations:** When the potentiometer was turned to the left the tank moved left. When the potentiometer was turned to the right the tank moved right.
+b. **Observations:** When the potentiometer was turned to the left the laser cannon moved left. When the potentiometer was turned to the right the tank moved right.
 
-c. **Requirements:** The system shall have a potentiometer that controls the movement of the tank.
+c. **Requirements:** The system shall have a potentiometer that controls the movement of the laser cannon.
+
+Laser Cannon
+------------
+.. _laser_cannon:
+
+a. **Test Procedure:** Count the number of pixels the laser cannon is tall and wide.
+
+b. **Observations:** The laser cannon is seven pixels tall and the width is variable depending on the DIP switch.
+
+c. **Requirements:** Laser cannon with height of seven pixels and variable width of 7, 9, 11, or 13 pixels depending on the DIP switch.
+
 
 
 

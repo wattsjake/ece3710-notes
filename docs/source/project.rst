@@ -148,6 +148,7 @@ are an appropriate level of detail. Data sheets or software listings are not. Th
 be too much detail. Still, expect over half of your document (not counting the
 appendices) to be design details, so use subsections for clarity. 
 
+
 Sprite Texture Generation
 *************************
 .. _sprite_texture_generation:
@@ -171,6 +172,60 @@ In Space Invaders, the laser tank is a player-controlled sprite that moves horiz
         :align: center
 
 Figure 3. Space Invaders Sprite Laser Tank
+
+
+Sprite Army Generation
+**********************
+.. _sprite_army_generation:
+
+The following code is used to generate the army of sprites. The code is found in the ``invaders.c`` file. 
+
+.. code-block:: c
+
+   //--------------------- Invader Array ------------------------
+   //master array that holds the state of each invader
+   unsigned char invader_array[16] = {1,1,1,1,1,1,1,1,
+							                 1,1,1,1,1,1,1,1};
+   bit sprite_figure = 0; //used to determine which sprite to draw refer to draw_army_animation() function
+
+   /**
+   * Draws a sprite on the screen.
+   */
+   void draw_sprite(unsigned char page, unsigned char col, unsigned char figure)
+   {
+      static unsigned int code sprite_texture_tb[] = {
+         0x70, 0x18, 0x7D, 0xB6, 0x3C, 0x3C, 0xB6, 0x7D, 0x18, 0x70, //first sprite
+         0x0E, 0x98, 0x7D, 0x36, 0x3C, 0x3C, 0x36, 0x7D, 0x98, 0x0E};//second sprite
+      unsigned char frame = figure * 10; //if figure is 0 then frame = 0, if figure is 1 then frame = 10
+
+      unsigned char i = 0;
+      for(i=0; i<10; i++)
+      {
+         write_byte(page, col+i, sprite_texture_tb[frame+i]);
+      }
+   }
+
+   void draw_army(unsigned char page, unsigned char col, unsigned char figure)
+   {
+      unsigned char i;
+      unsigned char j;
+      for(i = 0; i < 2; i++){
+         for(j = 0; j < 8; j++){
+            if(invader_array[i*8+j] == 1)//invader_array is a 16 element array
+            {
+               draw_sprite(page+i, col+j*13, figure);
+            }
+            else
+            {
+               continue; //if invader value is 0 then skip it
+            }
+         }
+      }
+   }
+
+This code will used the master **invader_array[16]** to determine which invaders are active or inactive. The invader array is a 16 element array that holds the state of each invader. The invader array is initialized to all 1's, which means that all invaders are active. When an invader is destroyed, the corresponding element in the invader array is set to 0. The **sprite_texture_tb[]** is a table of values to draw both types of sprites. It is a 1-D array so to access each type of sprite the difference is 10. The **figure** variable is used to determine which sprite to draw. The figure variable is toggled between 0 and 1.
+
+
 
 Timers and Interrupts
 *********************************

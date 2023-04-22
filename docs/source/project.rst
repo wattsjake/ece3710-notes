@@ -382,11 +382,34 @@ Laser Cannon
 ------------
 .. _laser_cannon:
 
-a. **Test Procedure:** Count the number of pixels the laser cannon is tall and wide.
+a. **Test Procedure:** Count the number of pixels the laser cannon is tall and wide. Verify with image.
+
+    .. image:: images/invaders-laser.drawio.png
+        :width: 500
+        :height: 350
+        :alt: Sprite Laser Tank
+        :align: center
 
 b. **Observations:** The laser cannon is seven pixels tall and the width is variable depending on the DIP switch.
 
 c. **Requirements:** Laser cannon with height of seven pixels and variable width of 7, 9, 11, or 13 pixels depending on the DIP switch.
+
+
+Invaders
+--------
+.. _invaders:
+
+a. **Test Procedure:** Count the number of pixels the invaders are tall and wide. Verify with image.
+
+    .. image:: images/invaders-sprites.drawio.png
+        :width: 650
+        :height: 350
+        :alt: Sprite 'UP' & 'DOWN'
+        :align: center
+
+b. **Observations:** The invaders are six pixels tall and ten pixels wide.
+
+c. **Requirements:** Invaders with a height of 6-8 pixels and width of 10 pixels for front row and narrower for back row
 
 
 

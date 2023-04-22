@@ -191,9 +191,6 @@ invaders
       +--utils.c  
  
 
-
-
-
 Sprite Texture Generation
 *************************
 .. _sprite_texture_generation:
@@ -269,6 +266,14 @@ The following code is used to generate the army of sprites. The code is found in
    }
 
 This code will used the master **invader_array[16]** to determine which invaders are active or inactive. The invader array is a 16 element array that holds the state of each invader. The invader array is initialized to all 1's, which means that all invaders are active. When an invader is destroyed, the corresponding element in the invader array is set to 0. The **sprite_texture_tb[]** is a table of values to draw both types of sprites. It is a 1-D array so to access each type of sprite the difference is 10. The **figure** variable is used to determine which sprite to draw. The figure variable is toggled between 0 and 1.
+
+The **draw_army** function will create an array of invaders. Please refer to the image below.
+   
+      .. image:: images/invaders-army.jpg
+         :width: 650
+         :height: 350
+         :alt: Sprite Army
+         :align: center
 
 
 

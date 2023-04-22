@@ -359,9 +359,23 @@ Rest, Start, and Fire Buttons
 -----------------------------
 .. _rest_start_and_fire_buttons:
 
-Requirements: The system shall have a reset button, a start button and a fire button.
+a. **Test Procedure:** Press the reset button, the start button, and the fire button. Check to see if the game resets, starts, and fires.
 
-Test Procedure: Press the reset button, the start button, and the fire button. Check to see if the game resets, starts, and fires.
+b. **Observations:** When the reset button was pressed the game returned to the 'start' menu. When the start button was pressed the game started. When the fire button was pressed the tank fired.
+
+c. **Requirements:** The system shall have a reset button, a start button and a fire button.
+
+Potentiometer
+-------------
+.. _potentiometer:
+
+a. **Test Procedure:** Turn the potentiometer to the left and to the right. Check to see if the tank moves left and right.
+
+b. **Observations:** When the potentiometer was turned to the left the tank moved left. When the potentiometer was turned to the right the tank moved right.
+
+c. **Requirements:** The system shall have a potentiometer that controls the movement of the tank.
+
+
 
 Conclusion
 ##########

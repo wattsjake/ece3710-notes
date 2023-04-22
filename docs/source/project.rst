@@ -329,6 +329,7 @@ Testing the timer0 interrupt. By toggling the P1.0 pin we can see the interrupt 
    :align: center
 
 
+
 Timer 2
 -------
 .. _timer_2:
@@ -408,12 +409,14 @@ Sound Generation
 
 Timer 4 is used to generate the sound for the game. Please see the section on timers and interrupts for more information about the timer 4 interrupt. The sound is generated using a sine wave. The following code is used for the sound generation. 'notes.h' is a header file that contains the frequencies for the notes. Refer to the image below for reference to the schematic of the audio amplifier circuit.
 
+
 .. image:: images/audio-amplifier.png
-   :width: 650
+   :width: 450
    :height: 350
    :alt: Audio Amplifier
    :align: center
-   
+
+
 
 .. code-block:: c
 

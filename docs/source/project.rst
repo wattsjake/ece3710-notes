@@ -412,6 +412,48 @@ b. **Observations:** The invaders are six pixels tall and ten pixels wide.
 c. **Requirements:** Invaders with a height of 6-8 pixels and width of 10 pixels for front row and narrower for back row
 
 
+Score 
+*****
+.. _score:
+
+a. **Test Procedure:** Play the game and check to see if a 4-digit score is displayed.
+
+b. **Observations:** A 4-digit score is displayed.
+
+c. **Requirements:** The system shall continually display a 4-digit score that tallies the number of aliens destroyed by the current player.
+
+
+Initial Start
+*************
+.. _initial_start:
+
+a. **Test Procedure:** Press the start button and check to see if the game starts. Verify the score is set to zero and an initial wave of alien attackers shall commence.
+
+b. **Observations:** When the start button was pressed the game started. The score was set to zero and an initial wave of alien attackers commenced.
+
+c. **Requirements:** When the start button is pressed, the score shall be set to zero and an initial wave of alien attackers shall commence (see #9, below).
+
+
+Initial Display
+***************
+.. _initial_display:
+
+a. **Test Procedure:** Press the start button and check to see if the display shows the laser cannon and 2 rows of 8 alien space invaders.
+
+b. **Observations:** When the start button was pressed the display showed the laser cannon and 2 rows of 8 alien space invaders.
+
+c. **Requirements:** At the beginning of each wave, the display shall show (a) the laser cannon (at the bottom of the screen), and (b) 2 rows of 8 alien space invaders (arrayed on the left side of the screen). On the initial wave, the invaders shall be as far from the laser cannon as possible.
+
+Battle 
+******
+.. _battle:
+
+a. **Test Procedure:** Press the start button and check to see if the invaders move to the right, firing lasers at random. When the invaders reach the side of the display, they shall move 8 pixels closer to the laser cannon and reverse direction.
+
+b. **Observations:** When the start button was pressed the invaders moved to the right, firing lasers at random. When the invaders reached the side of the display, they moved 8 pixels closer to the laser cannon and reversed direction.
+
+c. **Requirements:** Once the battle begins, the formation of invaders shall move to the right, firing lasers at random. When the invaders reach the side of the display, they shall move 8 pixels closer to the laser cannon and reverse direction.
+
 
 
 Conclusion

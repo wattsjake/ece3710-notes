@@ -271,7 +271,7 @@ This code will used the master **invader_array[16]** to determine which invaders
 
 The **draw_army** function will create an array of invaders. Please refer to the image below.
    
-      .. image:: images/invaders-army.jpg
+      .. image:: images/invader-army.jpg
          :width: 650
          :height: 350
          :alt: Sprite Army

@@ -148,6 +148,51 @@ are an appropriate level of detail. Data sheets or software listings are not. Th
 be too much detail. Still, expect over half of your document (not counting the
 appendices) to be design details, so use subsections for clarity. 
 
+File Architecture
+*****************
+.. _file_architecture:
+
+The C code is organized in a logical manner, with similar functions grouped together. The code is well commented and easy to follow. Below is a brief description of the code architecture.
+
+invaders
+  |
+  +--Header Files
+  |   |
+  |   +--C8051F020_defs.h
+  |   |
+  |   +--debug.h
+  |   |
+  |   +--init.h
+  |   |
+  |   +--interrupts.h
+  |   |
+  |   +--invaders.h
+  |   |
+  |   +--lcd.h
+  |   |
+  |   +--notes.h 
+  |   |
+  |   +--si_toolchain.h
+  |   |
+  |   +--utils.h
+  |   
+  +--Source Files
+      |
+      +--debug.c 
+      |
+      +--init.c
+      |
+      +--interrupts.c
+      |
+      +--invaders.c
+      |
+      +--lcd.asm 
+      |
+      +--utils.c  
+ 
+
+
+
 
 Sprite Texture Generation
 *************************
@@ -185,7 +230,7 @@ The following code is used to generate the army of sprites. The code is found in
    //--------------------- Invader Array ------------------------
    //master array that holds the state of each invader
    unsigned char invader_array[16] = {1,1,1,1,1,1,1,1,
-							                 1,1,1,1,1,1,1,1};
+							1,1,1,1,1,1,1,1};
    bit sprite_figure = 0; //used to determine which sprite to draw refer to draw_army_animation() function
 
    /**

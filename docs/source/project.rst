@@ -357,7 +357,7 @@ applicable. Be sure each requirement is covered by at least one test.
 
 
 Rest, Start, and Fire Buttons
------------------------------
+******************************
 .. _rest_start_and_fire_buttons:
 
 a. **Test Procedure:** Press the reset button, the start button, and the fire button. Check to see if the game resets, starts, and fires.
@@ -368,7 +368,7 @@ c. **Requirements:** The system shall have a reset button, a start button and a 
 
 
 Potentiometer
--------------
+*************
 .. _potentiometer:
 
 a. **Test Procedure:** Turn the potentiometer to the left and to the right. Check to see if the laser cannon moves left and right.
@@ -379,7 +379,7 @@ c. **Requirements:** The system shall have a potentiometer that controls the mov
 
 
 Laser Cannon
-------------
+************
 .. _laser_cannon:
 
 a. **Test Procedure:** Count the number of pixels the laser cannon is tall and wide. Verify with image.
@@ -396,7 +396,7 @@ c. **Requirements:** Laser cannon with height of seven pixels and variable width
 
 
 Invaders
---------
+********
 .. _invaders:
 
 a. **Test Procedure:** Count the number of pixels the invaders are tall and wide. Verify with image.

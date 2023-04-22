@@ -338,7 +338,7 @@ Hardware Schematic
 
 Here is an image of the hardware schematic. Details need to be added.
 
-    .. image:: images/project02-space-invaders-schematic.png
+    .. image:: images/project02-space-invaders-schematic-rev1-1.png
         :width: 500
         :height: 350
         :alt: 8051 Schematic

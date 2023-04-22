@@ -355,6 +355,7 @@ tests for your implementation. State for each test: (a) the test procedure, (b) 
 observations to verify, (c) your observations, and (d) which requirements are
 applicable. Be sure each requirement is covered by at least one test. 
 
+
 Rest, Start, and Fire Buttons
 -----------------------------
 .. _rest_start_and_fire_buttons:
@@ -365,6 +366,7 @@ b. **Observations:** When the reset button was pressed the game returned to the 
 
 c. **Requirements:** The system shall have a reset button, a start button and a fire button.
 
+
 Potentiometer
 -------------
 .. _potentiometer:
@@ -374,6 +376,7 @@ a. **Test Procedure:** Turn the potentiometer to the left and to the right. Chec
 b. **Observations:** When the potentiometer was turned to the left the laser cannon moved left. When the potentiometer was turned to the right the tank moved right.
 
 c. **Requirements:** The system shall have a potentiometer that controls the movement of the laser cannon.
+
 
 Laser Cannon
 ------------

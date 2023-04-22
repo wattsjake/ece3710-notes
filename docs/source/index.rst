@@ -14,11 +14,10 @@ This project contains notes for the ECE 3710 Embedded Systems course at Weber St
 
 Contents
 --------
-.. toctree::
-   :maxdepth: 3
 
+.. toctree::
+   
    silicon_ide
    project
-   assembly
-   example_rst
+   appendix
    

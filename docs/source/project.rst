@@ -39,8 +39,21 @@ Scope
 #####
 .. _scope:
 
-This section specifies the scope of the document. The scope tells the reader what the
-document covers, and more important, what it doesn't cover. 
+1. Introduction: Provide a brief overview of the Space Invaders game, including its history and popularity.
+
+2. Scope: Define the scope of the documentation, including what will be covered and what will not be covered.
+
+3. Design Overview: Explain the high-level design of the game, including the game mechanics, graphics, and sound effects. This section should provide an overview of how the game works.
+
+4. Design Alternatives: Discuss any design alternatives that were considered during the development of the game. This section should explain why certain design decisions were made and what the trade-offs were.
+
+5. Design Details: Provide a detailed explanation of the design of the game, including the code and hardware used. This section should provide a step-by-step explanation of how the game works and how it interacts with the hardware components.
+
+6. Testing: Detail the testing process for the game, including any bugs that were encountered and how they were fixed. This section should also explain how the game was optimized for performance.
+
+7. Conclusion: Provide a summary of the game and the design process, including any final thoughts or recommendations for future development. This section should also highlight any major achievements or challenges that were encountered during the development process.
+
+
 
 Design Overview
 ###############
@@ -121,7 +134,7 @@ Dependencies
 15. Sound generated for firing laser cannon, destroying an invader, or game over, with different sounds for each event and a maximum length of 250 milliseconds.
 
 Theory of Operation
-*******************
+********************
 .. _theory_of_operation:
 
 .. note::

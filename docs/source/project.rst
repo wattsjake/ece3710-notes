@@ -172,7 +172,7 @@ Below is an image of the hardware of the game. The hardware consists of the foll
 6. 8 DIP switches
 7. Potentiometer
 8. Fire button
-9. LCD display
+9. 64x128 pixel LCD
 10. Start button
 
 
@@ -493,6 +493,40 @@ The following code is an example of how the sound is generated for the game.
       play_note(E5, 100);	
    }
 
+.. note::
+
+   Add information here
+
+
+Power Supply
+************
+.. _power_supply:
+
+.. note::
+
+   Add information here
+
+Here is an image of the power supply schematic. Details need to be added.
+
+    .. image:: images/power-supply-9VDC.png
+        :width: 500
+        :height: 350
+        :alt: 8051 Power Supply
+        :align: center
+
+.. note::
+
+   Add information here
+
+
+Crystal Oscillator
+******************
+.. _crystal_oscillator:
+
+.. note::
+
+   Add information here
+   
 
 Hardware Schematic 
 ******************

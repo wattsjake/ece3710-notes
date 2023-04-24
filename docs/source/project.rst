@@ -644,9 +644,7 @@ Everytime the timer 4 overflows it will trigger the following interrupt handler.
       }
    }
 
-.. note::
-
-   Add information about the timer 4 interrupt here.
+It is important to note the following line of code. ``{RCAP4H = RCAP4L = 0;}`` This line of code is used to reset the timer 4 high and low bytes to zero. This is important because the timer 4 is used to generate the sound for the game. If a note is too high the timer will overflow so fast that the game will stop working. It's important to set the timer 4 high and low bytes to zero to prevent this from happening.
 
 
 Sound Generation
@@ -694,9 +692,7 @@ The following code is an example of how the sound is generated for the game.
       play_note(E5, 100);	
    }
 
-.. note::
-
-   Add information here
+Sound will play everytime the player shoots a laser, when an enemy fires a laser, and when the player dies.
 
 
 Power Supply
@@ -717,9 +713,7 @@ Here is an image of the power supply schematic. Details need to be added.
 
 Figure 9. Space Invaders Power Supply
 
-.. note::
-
-   Add information here
+The power supply is meant to be run off a 9V battery, but the design has been engineered to work off any voltage less than 25VDC.
 
 
 Crystal Oscillator
@@ -734,9 +728,7 @@ Crystal Oscillator
 
 Figure 10. Space Invaders Crystal Oscillator
 
-.. note::
-
-   Add information here
+The crystal oscillator is used to generate the clock signal for the 8051 microcontroller. The crystal oscillator is a 22.1184MHz crystal.
 
 
 Hardware Schematic 

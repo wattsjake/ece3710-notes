@@ -338,7 +338,7 @@ Timers and Interrupts
 The 8051 microcontroller has two 16-bit timers that can be used to generate delays, measure frequency, or create PWM signals. The microcontroller also has a watchdog timer to detect and recover from system faults. These timers are important features that provide precise timing and control in many applications.
 
 Timer 0
--------
+^^^^^^^
 .. _timer_0:
 
 Timer 0 is a 16-bit timer that is used to create delays in the Space Invaders game. The timer is configured using the following code found in the ``init.c`` file.
@@ -387,7 +387,7 @@ From the image above we can see that the interrupt is triggered every 70 millise
 
 
 Timer 2
--------
+^^^^^^^
 .. _timer_2:
 
 Timer 2 is used for the ADC. The timer is configured using the following code found in the ``init.c`` file.
@@ -424,7 +424,7 @@ Everytime the timer 2 overflows it will trigger the following interrupt handler.
    Add information about the timer 2 interrupt here.
 
 Timer 4
--------
+^^^^^^^
 .. _timer_4:
 
 Timer 4 is used for the ADC which generates the sound for the game. The timer is configured using the following code found in the ``init.c`` file.

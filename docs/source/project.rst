@@ -8,10 +8,6 @@ Introduction
 ============
 .. _introduction:
 
-Space Invaders
---------------
-.. _space-invaders:
-
 Released in 1978 by Taito, Space invaders was one of the earliest “shooting”
 video games. The goal is to defeat waves of alien invaders that zig-zag towards
 Earth with a laser cannon, and of course, to score as many points as possible

@@ -1,17 +1,16 @@
-************
 Appendices
-************
+==========
 .. _appendices:
 
 This is the appropriate place to put items for reference only, such as software
 listings. 
 
 Include Files
-#############
+-------------
 .. _include_files:
 
 notes.h 
-*******
+^^^^^^^
 .. _notes.h:
 
 The following code is for reference to the note.h file.
@@ -162,7 +161,7 @@ The following code is for reference to the note.h file.
    #define Eb8 278
 
 lcd.h 
-*****
+^^^^^
 .. _lcd.h:
 
 The following code is for reference to the lcd.h file.
@@ -208,7 +207,7 @@ The following code is for reference to the lcd.h file.
    extern code char font5x8[];
 
 C8051F020_defs.h 
-****************
+^^^^^^^^^^^^^^^^
 .. _C8051F020_defs.h:
 
 The following code is for reference to the C8051F020_defs.h file.
@@ -224,7 +223,7 @@ The following code is for reference to the C8051F020_defs.h file.
    // Program Description:
    //
    // Register/bit definitions for the C8051F02x family.
-   // **Important Note**: The si_toolchain.h header file should be included
+   // ^^Important Note^^: The si_toolchain.h header file should be included
    // before including this header file.
    //
    // Target:         C8051F020, 'F021, 'F022, 'F023

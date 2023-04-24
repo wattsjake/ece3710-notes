@@ -42,19 +42,19 @@ Scope
 =====
 .. _scope:
 
-1. --Introduction:-- Provide a brief overview of the Space Invaders game, including its history and popularity.
+1. **Introduction:** Provide a brief overview of the Space Invaders game, including its history and popularity.
 
-2. --Scope:-- Define the scope of the documentation, including what will be covered and what will not be covered.
+2. **Scope:** Define the scope of the documentation, including what will be covered and what will not be covered.
 
-3. --Design Overview:-- Explain the high-level design of the game, including the game mechanics, graphics, and sound effects. This section should provide an overview of how the game works.
+3. **Design Overview:** Explain the high-level design of the game, including the game mechanics, graphics, and sound effects. This section should provide an overview of how the game works.
 
-4. --Design Alternatives:-- Discuss any design alternatives that were considered during the development of the game. This section should explain why certain design decisions were made and what the trade-offs were.
+4. **Design Alternatives:** Discuss any design alternatives that were considered during the development of the game. This section should explain why certain design decisions were made and what the trade-offs were.
 
-5. --Design Details:-- Provide a detailed explanation of the design of the game, including the code and hardware used. This section should provide a step-by-step explanation of how the game works and how it interacts with the hardware components.
+5. **Design Details:** Provide a detailed explanation of the design of the game, including the code and hardware used. This section should provide a step-by-step explanation of how the game works and how it interacts with the hardware components.
 
-6. --Testing:-- Detail the testing process for the game, including any bugs that were encountered and how they were fixed. This section should also explain how the game was optimized for performance.
+6. **Testing:** Detail the testing process for the game, including any bugs that were encountered and how they were fixed. This section should also explain how the game was optimized for performance.
 
-7. --Conclusion:-- Provide a summary of the game and the design process, including any final thoughts or recommendations for future development. This section should also highlight any major achievements or challenges that were encountered during the development process.
+7. **Conclusion:** Provide a summary of the game and the design process, including any final thoughts or recommendations for future development. This section should also highlight any major achievements or challenges that were encountered during the development process.
 
 
 
@@ -144,13 +144,13 @@ Design Overview
 
    Add information about the theory of operation here.
 
-1. --Input Interface:-- The input interface block includes the potentiometer, start, fire, and reset buttons. The potentiometer is used to change the location of the laser     cannon on the screen, while the start, fire, and reset buttons are used to initiate the game, fire the laser, and reset the game, respectively. The input signals are read by the microcontroller and processed to update the game state.
+1. **Input Interface:** The input interface block includes the potentiometer, start, fire, and reset buttons. The potentiometer is used to change the location of the laser     cannon on the screen, while the start, fire, and reset buttons are used to initiate the game, fire the laser, and reset the game, respectively. The input signals are read by the microcontroller and processed to update the game state.
 
-2. --Game Logic:-- The game logic block is responsible for implementing the rules of the game, tracking the player's score, and updating the game state. The game logic also includes collision detection to determine if the laser beam hits an alien invader or if an alien invader reaches the bottom of the screen, ending the game.
+2. **Game Logic:** The game logic block is responsible for implementing the rules of the game, tracking the player's score, and updating the game state. The game logic also includes collision detection to determine if the laser beam hits an alien invader or if an alien invader reaches the bottom of the screen, ending the game.
 
-3. --Graphics:-- The graphics block generates the graphics for the game, including the player's laser cannon, the alien invaders, and any other visual elements such as the score display. The graphics are displayed on the screen in real-time as the game progresses.
+3. **Graphics:** The graphics block generates the graphics for the game, including the player's laser cannon, the alien invaders, and any other visual elements such as the score display. The graphics are displayed on the screen in real-time as the game progresses.
 
-4. --Sound:-- The sound block generates sound effects for the game, including the firing of the laser cannon and any other relevant sound effects.
+4. **Sound:** The sound block generates sound effects for the game, including the firing of the laser cannon and any other relevant sound effects.
 
 All of these functional blocks work together to create the game experience. The input interface provides the user with a way to interact with the game, the game logic implements the rules of the game and updates the game state, the graphics block generates the visual elements of the game, and the sound block adds auditory feedback to the gameplay. Together, these blocks create an immersive and engaging gaming experience for the player.
 
@@ -283,9 +283,9 @@ The following code is used to generate the army of sprites. The code is found in
 	1,1,1,1,1,1,1,1};
    bit sprite_figure = 0;//used to determine which sprite to draw refer to draw_army_animation()
 
-   /--
-   - Draws a sprite on the screen.
-   -/
+   /*
+    Draws a sprite on the screen.
+   */
    void draw_sprite(unsigned char page, unsigned char col, unsigned char figure)
    {
       static unsigned int code sprite_texture_tb[] = {
@@ -318,9 +318,9 @@ The following code is used to generate the army of sprites. The code is found in
       }
    }
 
-This code will used the master --invader_array[16]-- to determine which invaders are active or inactive. The invader array is a 16 element array that holds the state of each invader. The invader array is initialized to all 1's, which means that all invaders are active. When an invader is destroyed, the corresponding element in the invader array is set to 0. The --sprite_texture_tb[]-- is a table of values to draw both types of sprites. It is a 1-D array so to access each type of sprite the difference is 10. The --figure-- variable is used to determine which sprite to draw. The figure variable is toggled between 0 and 1.
+This code will used the master **invader_array[16]** to determine which invaders are active or inactive. The invader array is a 16 element array that holds the state of each invader. The invader array is initialized to all 1's, which means that all invaders are active. When an invader is destroyed, the corresponding element in the invader array is set to 0. The **sprite_texture_tb[]** is a table of values to draw both types of sprites. It is a 1-D array so to access each type of sprite the difference is 10. The **figure** variable is used to determine which sprite to draw. The figure variable is toggled between 0 and 1.
 
-The --draw_army-- function will create an array of invaders. Please refer to the image below.
+The **draw_army** function will create an array of invaders. Please refer to the image below.
    
       .. image:: images/invader-army.jpg
          :width: 650
@@ -484,9 +484,9 @@ This circuit takes advange of the NJM2113 IC for the audio amplifier. It also ta
    code unsigned char sine[] = { 176, 217, 244, 254, 244, 217, 176, 128, 80, 39, 12, 2, 12, 39, 80, 128 };
    unsigned char phase = sizeof(sine)-1;	// current point in sine to output
 
-   /- 	---------- Play Notes ----------
+   /* 	---------- Play Notes ----------
 	This function is used to play notes for the game.
-   -/
+   */
    void play_note(int note, int dur)
    {
       RCAP4H = -note >> 8;
@@ -582,29 +582,29 @@ Rest, Start, and Fire Buttons
 ------------------------------
 .. _rest_start_and_fire_buttons:
 
-a. --Test Procedure:-- Press the reset button, the start button, and the fire button. Check to see if the game resets, starts, and fires.
+a. **Test Procedure:** Press the reset button, the start button, and the fire button. Check to see if the game resets, starts, and fires.
 
-b. --Observations:-- When the reset button was pressed the game returned to the 'start' menu. When the start button was pressed the game started. When the fire button was pressed the tank fired.
+b. **Observations:** When the reset button was pressed the game returned to the 'start' menu. When the start button was pressed the game started. When the fire button was pressed the tank fired.
 
-c. --Requirements:-- The system shall have a reset button, a start button and a fire button.
+c. **Requirements:** The system shall have a reset button, a start button and a fire button.
 
 
 Potentiometer
 -------------
 .. _potentiometer:
 
-a. --Test Procedure:-- Turn the potentiometer to the left and to the right. Check to see if the laser cannon moves left and right.
+a. **Test Procedure:** Turn the potentiometer to the left and to the right. Check to see if the laser cannon moves left and right.
 
-b. --Observations:-- When the potentiometer was turned to the left the laser cannon moved left. When the potentiometer was turned to the right the tank moved right.
+b. **Observations:** When the potentiometer was turned to the left the laser cannon moved left. When the potentiometer was turned to the right the tank moved right.
 
-c. --Requirements:-- The system shall have a potentiometer that controls the movement of the laser cannon.
+c. **Requirements:** The system shall have a potentiometer that controls the movement of the laser cannon.
 
 
 Laser Cannon
 ------------
 .. _laser_cannon:
 
-a. --Test Procedure:-- Count the number of pixels the laser cannon is tall and wide. Verify with image.
+a. **Test Procedure:** Count the number of pixels the laser cannon is tall and wide. Verify with image.
 
     .. image:: images/invaders-laser.drawio.png
         :width: 500
@@ -614,16 +614,16 @@ a. --Test Procedure:-- Count the number of pixels the laser cannon is tall and w
 
 Figure 12. Laser Cannon Sprite
 
-b. --Observations:-- The laser cannon is seven pixels tall and the width is variable depending on the DIP switch.
+b. **Observations:** The laser cannon is seven pixels tall and the width is variable depending on the DIP switch.
 
-c. --Requirements:-- Laser cannon with height of seven pixels and variable width of 7, 9, 11, or 13 pixels depending on the DIP switch.
+c. **Requirements:** Laser cannon with height of seven pixels and variable width of 7, 9, 11, or 13 pixels depending on the DIP switch.
 
 
 Invaders
 --------
 .. _invaders:
 
-a. --Test Procedure:-- Count the number of pixels the invaders are tall and wide. Verify with image.
+a. **Test Procedure:** Count the number of pixels the invaders are tall and wide. Verify with image.
 
     .. image:: images/invaders-sprites.drawio.png
         :width: 650
@@ -633,52 +633,52 @@ a. --Test Procedure:-- Count the number of pixels the invaders are tall and wide
 
 Figure 13. Invaders Sprites
 
-b. --Observations:-- The invaders are six pixels tall and ten pixels wide.
+b. **Observations:** The invaders are six pixels tall and ten pixels wide.
 
-c. --Requirements:-- Invaders with a height of 6-8 pixels and width of 10 pixels for front row and narrower for back row
+c. **Requirements:** Invaders with a height of 6-8 pixels and width of 10 pixels for front row and narrower for back row
 
 
 Score 
 -----
 .. _score:
 
-a. --Test Procedure:-- Play the game and check to see if a 4-digit score is displayed.
+a. **Test Procedure:** Play the game and check to see if a 4-digit score is displayed.
 
-b. --Observations:-- A 4-digit score is displayed.
+b. **Observations:** A 4-digit score is displayed.
 
-c. --Requirements:-- The system shall continually display a 4-digit score that tallies the number of aliens destroyed by the current player.
+c. **Requirements:** The system shall continually display a 4-digit score that tallies the number of aliens destroyed by the current player.
 
 
 Initial Start
 -------------
 .. _initial_start:
 
-a. --Test Procedure:-- Press the start button and check to see if the game starts. Verify the score is set to zero and an initial wave of alien attackers shall commence.
+a. **Test Procedure:** Press the start button and check to see if the game starts. Verify the score is set to zero and an initial wave of alien attackers shall commence.
 
-b. --Observations:-- When the start button was pressed the game started. The score was set to zero and an initial wave of alien attackers commenced.
+b. **Observations:** When the start button was pressed the game started. The score was set to zero and an initial wave of alien attackers commenced.
 
-c. --Requirements:-- When the start button is pressed, the score shall be set to zero and an initial wave of alien attackers shall commence (see =9, below).
+c. **Requirements:** When the start button is pressed, the score shall be set to zero and an initial wave of alien attackers shall commence (see =9, below).
 
 
 Initial Display
 ---------------
 .. _initial_display:
 
-a. --Test Procedure:-- Press the start button and check to see if the display shows the laser cannon and 2 rows of 8 alien space invaders.
+a. **Test Procedure:** Press the start button and check to see if the display shows the laser cannon and 2 rows of 8 alien space invaders.
 
-b. --Observations:-- When the start button was pressed the display showed the laser cannon and 2 rows of 8 alien space invaders.
+b. **Observations:** When the start button was pressed the display showed the laser cannon and 2 rows of 8 alien space invaders.
 
-c. --Requirements:-- At the beginning of each wave, the display shall show (a) the laser cannon (at the bottom of the screen), and (b) 2 rows of 8 alien space invaders (arrayed on the left side of the screen). On the initial wave, the invaders shall be as far from the laser cannon as possible.
+c. **Requirements:** At the beginning of each wave, the display shall show (a) the laser cannon (at the bottom of the screen), and (b) 2 rows of 8 alien space invaders (arrayed on the left side of the screen). On the initial wave, the invaders shall be as far from the laser cannon as possible.
 
 Battle 
 ------
 .. _battle:
 
-a. --Test Procedure:-- Press the start button and check to see if the invaders move to the right, firing lasers at random. When the invaders reach the side of the display, they shall move 8 pixels closer to the laser cannon and reverse direction.
+a. **Test Procedure:** Press the start button and check to see if the invaders move to the right, firing lasers at random. When the invaders reach the side of the display, they shall move 8 pixels closer to the laser cannon and reverse direction.
 
-b. --Observations:-- When the start button was pressed the invaders moved to the right, firing lasers at random. When the invaders reached the side of the display, they moved 8 pixels closer to the laser cannon and reversed direction.
+b. **Observations:** When the start button was pressed the invaders moved to the right, firing lasers at random. When the invaders reached the side of the display, they moved 8 pixels closer to the laser cannon and reversed direction.
 
-c. --Requirements:-- Once the battle begins, the formation of invaders shall move to the right, firing lasers at random. When the invaders reach the side of the display, they shall move 8 pixels closer to the laser cannon and reverse direction.
+c. **Requirements:** Once the battle begins, the formation of invaders shall move to the right, firing lasers at random. When the invaders reach the side of the display, they shall move 8 pixels closer to the laser cannon and reverse direction.
 
 
 

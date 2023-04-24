@@ -1,6 +1,5 @@
-**************
 Space Invaders
-**************
+##############
 .. _space-invaders:
 
 .. note::
@@ -8,7 +7,7 @@ Space Invaders
    This project is under active development.
 
 Introduction
-############
+============
 .. _introduction:
 
 Released in 1978 by Taito, Space invaders was one of the earliest “shooting”

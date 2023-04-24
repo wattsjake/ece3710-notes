@@ -18,12 +18,9 @@ Our goal for this project is to design and implement Space Invaders on an embedd
 Through this project, we will gain practical experience in embedded systems design and programming, as well as develop our problem-solving and teamwork skills. By the end of the project, we will have a fully functional Space Invaders game that can be played on an embedded system, demonstrating our mastery of the course material and our ability to create complex systems from scratch. 
 
 
-Contents
---------
-
 .. toctree::
+   :caption: Contents:
    
-   silicon_ide
    project
    appendix
    

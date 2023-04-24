@@ -27,7 +27,7 @@ wave of aliens that starts closer and moves faster.
         :alt: Space Invaders
         :align: center
         
-Space InvadersTM
+Figure 1. Space InvadersTM
 
 For this project, we use the LCD to display the laser cannon, the aliens and the
 score. Shields are optional. One pushbutton is used to start the game and the
@@ -163,6 +163,8 @@ Below is an image of the hardware of the game. The hardware consists of the foll
         :alt: 8051 Periferals
         :align: center
 
+Figure 2. 8051 Periferals
+
 
 1. Reset button
 2. JTAG connector for programming
@@ -237,7 +239,10 @@ The C code is organized in a logical manner, with similar functions grouped toge
          |
          +--lcd.asm 
          |
-         +--utils.c  
+         +--utils.c 
+
+
+Figure 3. Code Architecture 
  
 
 Sprite Texture Generation
@@ -252,7 +257,7 @@ In Space Invaders, the sprite is a two-dimensional graphic representing the alie
         :alt: Sprite 'UP' & 'DOWN'
         :align: center
 
-Figure 2. Space Invaders Sprite 'UP' & 'DOWN'
+Figure 4. Space Invaders Sprite 'UP' & 'DOWN'
 
 In Space Invaders, the laser tank is a player-controlled sprite that moves horizontally across the bottom of the screen, firing a laser beam at the descending alien enemies. The size of the tank can be adjusted by changing the dip switches on the arcade game's circuit board, which can increase or decrease the tank's size by 7, 9, 11, or 13 pixels. This adjustment can significantly affect the gameplay experience, as a smaller tank can be more difficult to control but offers a smaller target for the enemy sprites, while a larger tank can be easier to maneuver but is also a larger target. The option to adjust the tank size via dip switches was a popular feature of the game among arcade operators and players, allowing for customization and variability in gameplay.
 
@@ -262,7 +267,7 @@ In Space Invaders, the laser tank is a player-controlled sprite that moves horiz
         :alt: Sprite Laser Tank
         :align: center
 
-Figure 3. Space Invaders Sprite Laser Tank
+Figure 5. Space Invaders Sprite Laser Tank
 
 
 Sprite Army Generation
@@ -324,6 +329,8 @@ The **draw_army** function will create an array of invaders. Please refer to the
          :alt: Sprite Army
          :align: center
 
+Figure 6. Space Invaders Sprite Army
+
 
 Timers and Interrupts
 *********************************
@@ -374,6 +381,8 @@ Testing the timer0 interrupt. By toggling the P1.0 pin we can see the interrupt 
    :height: 350
    :alt: Timer0 Interrupt Scope
    :align: center
+
+Figure 7. Space Invaders Timer0 Interrupt Scope
 
 From the image above we can see that the interrupt is triggered every 70 milliseconds. The interrupt is triggered at 14.3 kHz.
 
@@ -463,6 +472,8 @@ Timer 4 is used to generate the sound for the game. Please see the section on ti
    :alt: Audio Amplifier
    :align: center
 
+Figure 8. Space Invaders Audio Amplifier
+
 This circuit takes advange of the NJM2113 IC for the audio amplifier. It also takes in the DAC0 output and amplifies it. The following code is used to generate the sound for the game.
 
 .. code-block:: c
@@ -514,6 +525,8 @@ Here is an image of the power supply schematic. Details need to be added.
         :alt: 8051 Power Supply
         :align: center
 
+Figure 9. Space Invaders Power Supply
+
 .. note::
 
    Add information here
@@ -528,6 +541,8 @@ Crystal Oscillator
         :height: 350
         :alt: 8051 Crystal Oscillator
         :align: center
+
+Figure 10. Space Invaders Crystal Oscillator
 
 .. note::
 
@@ -549,6 +564,8 @@ Here is an image of the hardware schematic. Details need to be added.
         :height: 350
         :alt: 8051 Schematic
         :align: center
+
+Figure 11. Space Invaders Schematic
 
 
 Testing
@@ -596,6 +613,8 @@ a. **Test Procedure:** Count the number of pixels the laser cannon is tall and w
         :alt: Sprite Laser Tank
         :align: center
 
+Figure 12. Laser Cannon Sprite
+
 b. **Observations:** The laser cannon is seven pixels tall and the width is variable depending on the DIP switch.
 
 c. **Requirements:** Laser cannon with height of seven pixels and variable width of 7, 9, 11, or 13 pixels depending on the DIP switch.
@@ -612,6 +631,8 @@ a. **Test Procedure:** Count the number of pixels the invaders are tall and wide
         :height: 350
         :alt: Sprite 'UP' & 'DOWN'
         :align: center
+
+Figure 13. Invaders Sprites
 
 b. **Observations:** The invaders are six pixels tall and ten pixels wide.
 

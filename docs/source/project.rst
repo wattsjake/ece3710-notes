@@ -159,7 +159,7 @@ Below is an image of the hardware of the game. The hardware consists of the foll
 
     .. image:: images/overview-8051-periferals.jpg
         :width: 350
-        :height: 950
+        :height: 750
         :alt: 8051 Periferals
         :align: center
 
@@ -282,7 +282,7 @@ The following code is used to generate the army of sprites. The code is found in
    //master array that holds the state of each invader
    unsigned char invader_array[16] = {1,1,1,1,1,1,1,1,
 	1,1,1,1,1,1,1,1};
-   bit sprite_figure = 0; //used to determine which sprite to draw refer to draw_army_animation() function
+   bit sprite_figure = 0;//used to determine which sprite to draw refer to draw_army_animation()
 
    /**
    * Draws a sprite on the screen.
@@ -292,7 +292,7 @@ The following code is used to generate the army of sprites. The code is found in
       static unsigned int code sprite_texture_tb[] = {
          0x70, 0x18, 0x7D, 0xB6, 0x3C, 0x3C, 0xB6, 0x7D, 0x18, 0x70, //first sprite
          0x0E, 0x98, 0x7D, 0x36, 0x3C, 0x3C, 0x36, 0x7D, 0x98, 0x0E};//second sprite
-      unsigned char frame = figure * 10; //if figure is 0 then frame = 0, if figure is 1 then frame = 10
+      unsigned char frame = figure * 10; //if figure 0 then frame = 0, if figure 1 then frame = 10
 
       unsigned char i = 0;
       for(i=0; i<10; i++)
@@ -560,8 +560,8 @@ Hardware Schematic
 Here is an image of the hardware schematic. Details need to be added.
 
     .. image:: images/project02-space-invaders-schematic-rev1-2.png
-        :width: 500
-        :height: 350
+        :width: 600
+        :height: 450
         :alt: 8051 Schematic
         :align: center
 

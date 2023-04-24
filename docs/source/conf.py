@@ -6,8 +6,8 @@ project = 'ECE 3710 Space Invaders'
 copyright = '2023, Fernald & Watts'
 author = 'Fernald & Watts'
 
-release = '1.0'
-version = '0.1.1'
+release = '1.1'
+version = '0.1.2'
 
 # -- General configuration
 

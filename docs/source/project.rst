@@ -577,8 +577,8 @@ Figure 7. Space Invaders Timer0 Interrupt Scope
 From the image above we can see that the interrupt is triggered every 70 milliseconds. The interrupt is triggered at 14.3 kHz.
 
 
-Timer 2
-^^^^^^^
+Timer 2 ADC
+^^^^^^^^^^^
 .. _timer_2:
 
 Timer 2 is used for the ADC. The timer is configured using the following code found in the ``init.c`` file.
@@ -610,15 +610,14 @@ Everytime the timer 2 overflows it will trigger the following interrupt handler.
       }	
    }
 
-.. note::
+The following timer is used to trigger the ADC. It will read the potentiometer and calculate the ``avg`` value. The ``avg`` value is used to help determine where the laser cannon is located on the playing field.
 
-   Add information about the timer 2 interrupt here.
 
-Timer 4
-^^^^^^^
+Timer 4 DAC
+^^^^^^^^^^^^
 .. _timer_4:
 
-Timer 4 is used for the ADC which generates the sound for the game. The timer is configured using the following code found in the ``init.c`` file.
+Timer 4 is used for the DAC which generates the sound for the game. The timer is configured using the following code found in the ``init.c`` file.
 
 .. code-block:: c
 

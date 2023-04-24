@@ -2,7 +2,7 @@
 
 # -- Project information
 
-project = 'ECE 3710'
+project = 'ECE 3710 Space Invaders'
 copyright = '2023, Fernald & Watts'
 author = 'Fernald & Watts'
 

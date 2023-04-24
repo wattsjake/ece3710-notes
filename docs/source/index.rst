@@ -1,12 +1,5 @@
-Welcome to ECE 3710 Embedded Systems Notes
-===========================================
-
-.. note::
-
-   This project is under active development.
-
 Space Invaders
---------------
+==============
 
 In ECE 3710, we will be focusing on a specific project that will allow us to apply the concepts and techniques learned throughout the course: programming the classic arcade game Space Invaders on an embedded system.
 

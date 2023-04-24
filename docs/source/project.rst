@@ -26,8 +26,8 @@ wave of aliens that starts closer and moves faster.
         :height: 350
         :alt: Space Invaders
         :align: center
-
-Figure 1. Space InvadersTM
+        
+        Space InvadersTM
 
 For this project, we use the LCD to display the laser cannon, the aliens and the
 score. Shields are optional. One pushbutton is used to start the game and the
@@ -35,23 +35,27 @@ other is used to fire the laser cannon. The position of the laser cannon is
 controlled by a potentiometer mounted near the display. Game parameters are
 configured with a DIP switch.
 
+.. note::
+
+   Add another paragraph describing the overal project and hardware.
+
 Scope
 #####
 .. _scope:
 
-1. Introduction: Provide a brief overview of the Space Invaders game, including its history and popularity.
+1. **Introduction:** Provide a brief overview of the Space Invaders game, including its history and popularity.
 
-2. Scope: Define the scope of the documentation, including what will be covered and what will not be covered.
+2. **Scope:** Define the scope of the documentation, including what will be covered and what will not be covered.
 
-3. Design Overview: Explain the high-level design of the game, including the game mechanics, graphics, and sound effects. This section should provide an overview of how the game works.
+3. **Design Overview:** Explain the high-level design of the game, including the game mechanics, graphics, and sound effects. This section should provide an overview of how the game works.
 
-4. Design Alternatives: Discuss any design alternatives that were considered during the development of the game. This section should explain why certain design decisions were made and what the trade-offs were.
+4. **Design Alternatives:** Discuss any design alternatives that were considered during the development of the game. This section should explain why certain design decisions were made and what the trade-offs were.
 
-5. Design Details: Provide a detailed explanation of the design of the game, including the code and hardware used. This section should provide a step-by-step explanation of how the game works and how it interacts with the hardware components.
+5. **Design Details:** Provide a detailed explanation of the design of the game, including the code and hardware used. This section should provide a step-by-step explanation of how the game works and how it interacts with the hardware components.
 
-6. Testing: Detail the testing process for the game, including any bugs that were encountered and how they were fixed. This section should also explain how the game was optimized for performance.
+6. **Testing:** Detail the testing process for the game, including any bugs that were encountered and how they were fixed. This section should also explain how the game was optimized for performance.
 
-7. Conclusion: Provide a summary of the game and the design process, including any final thoughts or recommendations for future development. This section should also highlight any major achievements or challenges that were encountered during the development process.
+7. **Conclusion:** Provide a summary of the game and the design process, including any final thoughts or recommendations for future development. This section should also highlight any major achievements or challenges that were encountered during the development process.
 
 
 
@@ -59,7 +63,7 @@ Design Overview
 ###############
 .. _design_overview:
 
-Requirements
+1. Requirements
 ************
 .. _requirements:
 
@@ -113,7 +117,7 @@ Requirements
     invaders move (See below).
 
 
-Dependencies
+2. Dependencies
 ************
 .. _dependencies:
 
@@ -133,7 +137,7 @@ Dependencies
 14. Game over if a laser burst hits the laser cannon or if an invader reaches the bottom row, with "GAME OVER" displayed until the start button is pressed
 15. Sound generated for firing laser cannon, destroying an invader, or game over, with different sounds for each event and a maximum length of 250 milliseconds.
 
-Theory of Operation
+3. Theory of Operation
 ********************
 .. _theory_of_operation:
 
@@ -141,8 +145,18 @@ Theory of Operation
 
    Add information about the theory of operation here.
 
+1. **Input Interface:** The input interface block includes the potentiometer, start, fire, and reset buttons. The potentiometer is used to change the location of the laser     cannon on the screen, while the start, fire, and reset buttons are used to initiate the game, fire the laser, and reset the game, respectively. The input signals are read by the microcontroller and processed to update the game state.
 
-Design Alternatives
+2. **Game Logic:** The game logic block is responsible for implementing the rules of the game, tracking the player's score, and updating the game state. The game logic also includes collision detection to determine if the laser beam hits an alien invader or if an alien invader reaches the bottom of the screen, ending the game.
+
+3. **Graphics:** The graphics block generates the graphics for the game, including the player's laser cannon, the alien invaders, and any other visual elements such as the score display. The graphics are displayed on the screen in real-time as the game progresses.
+
+4. **Sound:** The sound block generates sound effects for the game, including the firing of the laser cannon and any other relevant sound effects.
+
+All of these functional blocks work together to create the game experience. The input interface provides the user with a way to interact with the game, the game logic implements the rules of the game and updates the game state, the graphics block generates the visual elements of the game, and the sound block adds auditory feedback to the gameplay. Together, these blocks create an immersive and engaging gaming experience for the player.
+
+
+4. Design Alternatives
 *******************
 .. _design_alternatives:
 

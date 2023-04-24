@@ -27,7 +27,7 @@ wave of aliens that starts closer and moves faster.
         :alt: Space Invaders
         :align: center
         
-        Space InvadersTM
+Space InvadersTM
 
 For this project, we use the LCD to display the laser cannon, the aliens and the
 score. Shields are optional. One pushbutton is used to start the game and the
@@ -154,6 +154,26 @@ Design Overview
 4. **Sound:** The sound block generates sound effects for the game, including the firing of the laser cannon and any other relevant sound effects.
 
 All of these functional blocks work together to create the game experience. The input interface provides the user with a way to interact with the game, the game logic implements the rules of the game and updates the game state, the graphics block generates the visual elements of the game, and the sound block adds auditory feedback to the gameplay. Together, these blocks create an immersive and engaging gaming experience for the player.
+
+Below is an image of the hardware of the game. The hardware consists of the following components:
+
+    .. image:: images/overview-8051-periferals.jpg
+        :width: 350
+        :height: 950
+        :alt: 8051 Periferals
+        :align: center
+
+
+1. Reset button
+2. JTAG connector for programming
+3. 5V power supply
+4. 8051 microcontroller
+5. NJM2113 audio amplifier
+6. 8 DIP switches
+7. Potentiometer
+8. Fire button
+9. LCD display
+10. Start button
 
 
 4. Design Alternatives

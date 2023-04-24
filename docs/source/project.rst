@@ -332,6 +332,106 @@ utils.c
 
 This file contains the function definitions for the utility functions used in the code. The utility functions are used to perform various tasks such as converting integers to strings, generating random numbers, and calculating the square root of a number.
 
+Collision Detection 
+-------------------
+.. _collision_detection:
+
+The code is a function that detects collisions between a laser and an invader sprite. It uses global variables to define the boundaries of the army block, an array of invader sprites, and an array of laser objects. The function loops through each active laser object and checks if it intersects with an invader sprite within the army block. If a collision is detected, the corresponding invader sprite is marked as inactive and the player score is incremented.
+
+.. code-block:: c
+
+   /*
+   * Function: Detect collision 
+   * between a laser and a sprite
+   * ---------------------------- 
+   * Globals:
+   *   unsigned int: left boundry of army block
+   *   unsigned int: right boundry of army block
+   *   unsigned char array: army block    
+   *   laser lasers: array of lasers
+   */
+   void collision_detect(){
+      int SPRITE_RATIO = 5042;
+      int ii;
+      unsigned long diff;
+      unsigned long TEMP;
+      TEMP = 100;
+      collision_tank_detect();
+      for(ii = 0; ii < MAX_LASER; ii++){
+         if(lasers[ii].active){
+               if(lasers[ii].page <= 0){
+                  lasers[ii].active = 0;
+               }
+               else if(lasers[ii].page <= army_page_offset+1){
+                  if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2))){
+                     //if(lasers[ii].page == lowest_active_sprite){ // The laser is at the same page as an active sprite. Next check for col.
+                           unsigned long col_temp = lasers[ii].col;
+                     diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
+                           diff = diff * SPRITE_RATIO;
+                           diff = MAX_INVADERS - (diff >> 16) - 1;
+                           if(invader_array[diff] == 1){
+                              invader_array[diff] = 0;
+                              lasers[ii].active = 0;
+                        player_score++;
+                        
+                           }
+                  }
+
+                  if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2)) && lasers[ii].active == 1){
+                           //if(lasers[ii].page == lowest_active_sprite){ // The laser is at the same page as an active sprite. Next check for col.
+                              unsigned long col_temp = lasers[ii].col;
+                              diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
+                              diff = diff * SPRITE_RATIO;
+                              diff = MAX_INVADERS/2 - (diff >> 16) - 1;
+                              if(invader_array[diff] == 1){
+                                 invader_array[diff] = 0;
+                                 lasers[ii].active = 0;
+                           player_score++;
+                                 
+                              }
+                           
+                  }
+               }
+         }
+      }
+   }
+
+This function is called from the main loop. It is called every time the game state is updated. The function loops through each active laser object and checks if it intersects with an invader sprite within the army block. If a collision is detected, the corresponding invader sprite is marked as inactive and the player score is incremented.
+
+
+Invader Laser Generation
+------------------------
+.. _invader_laser_generation:
+
+The code is a function that adds a new invader laser to an array of laser objects. It takes two parameters: the page and column coordinates of the new laser. The function loops through the array of laser objects and finds the first inactive laser object. It then sets the properties of this object to the new coordinates and marks it as active. The function uses several global variables, including the left and right boundaries of the army block and an array of invader laser objects.
+
+.. code-block:: c
+
+   /*
+   * Function: Shoot invader laser
+   * ---------------------------- 
+   * Globals:
+   *   unsigned int: left boundry of army block
+   *   unsigned int: right boundry of army block
+   *   unsigned char array: army block    
+   *   laser lasers: array of lasers
+   */
+
+   void add_invader_laser(int page, int col)
+   {
+      int ii;
+      for(ii = 0; ii < MAX_LASER; ii++){
+         if(invader_lasers[ii].active == 0){
+            invader_lasers[ii].active = 1;
+            invader_lasers[ii].page = page;
+            invader_lasers[ii].col = col;
+            break;
+         }
+      }
+   }
+
+Since each invader_lasers is a struct, the function uses the dot operator to access the properties of the laser object. The function is called from the main loop. It iterates through each invader laser object and checks if it is active. If it is not active, the function sets the properties of the laser object to the new coordinates and marks it as active.
+
 
 Sprite Texture Generation
 -------------------------
@@ -418,6 +518,8 @@ The **draw_army** function will create an array of invaders. Please refer to the
          :align: center
 
 Figure 6. Space Invaders Sprite Army
+
+As you can see 16 invaders have been drawn on the screen. 
 
 
 Timers and Interrupts

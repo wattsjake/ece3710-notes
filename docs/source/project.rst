@@ -523,10 +523,16 @@ Crystal Oscillator
 ******************
 .. _crystal_oscillator:
 
+    .. image:: images/crystal-oscillator.png
+        :width: 500
+        :height: 350
+        :alt: 8051 Crystal Oscillator
+        :align: center
+
 .. note::
 
    Add information here
-   
+
 
 Hardware Schematic 
 ******************
@@ -538,7 +544,7 @@ Hardware Schematic
 
 Here is an image of the hardware schematic. Details need to be added.
 
-    .. image:: images/project02-space-invaders-schematic-rev1-1.png
+    .. image:: images/project02-space-invaders-schematic-rev1-2.png
         :width: 500
         :height: 350
         :alt: 8051 Schematic

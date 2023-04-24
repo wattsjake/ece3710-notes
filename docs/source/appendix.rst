@@ -565,7 +565,184 @@ The following code is for reference to the C8051F020_defs.h file.
    // End Of File
    //-----------------------------------------------------------------------------
 
+debug.h 
+^^^^^^^
+.. _debug.h:
 
-.. note::
+.. code-block:: c 
 
-   Add include files here.
+   #ifndef DEBUG_H 
+   #define DEBUG_H
+
+   extern unsigned char debug_line_pos;
+
+   extern void debug_pot_position(unsigned char x);
+   extern void debug_army_position(signed char x);
+   extern void debug_draw_vertical_line(void);
+
+   #endif
+
+init.h 
+^^^^^^
+.. _init.h:
+
+.. code-block:: c 
+
+   #ifndef INIT_H 
+   #define INIT_H
+
+   extern long sum;
+   extern unsigned int avg;
+
+   extern void init(void);
+
+   #endif
+
+interrupt.h 
+^^^^^^^^^^^
+.. _interrupt.h:
+
+.. code-block:: c 
+
+   #ifndef INTERRUPTS_H 
+   #define INTERRUPTS_H
+
+   //----------------------ADC Variables-------------------------
+   extern bit pot_flag;
+   extern unsigned int adc_value; 
+   extern unsigned int count; //used to determine when to update the adc value
+
+   //------------------- Sound Variables ------------------------
+   extern unsigned long duration;		// number of cycles left to output
+   extern signed long envelope;
+   extern code unsigned char sine[];
+   extern unsigned char phase;	// current point in sine to output
+
+   //----------------------Timer0 Variables------------------------
+   extern unsigned int timer0;
+   extern bit timer0_flag;
+
+   #endif
+
+invaders.h 
+^^^^^^^^^^^
+.. _invaders.h:
+
+.. code-block:: c 
+
+   #ifndef INVADERS_H 
+   #define INVADERS_H
+   //------------------------ Define ----------------------------
+   #define MAX_LASER 10 //active lasers on the screen
+   #define INVADERS_PAGE_START 1
+   #define INVADERS_COL_START 15 //IMPORTANT: if you change this value you will need to adjust the invader_right_limit_array and invader_left_limit_array
+   #define MAX_INVADERS 16
+   #define LASER_ANIMATION_TIME_DELAY 2 //used to determine speed of laser
+   #define INVADER_ANIMATION_TIME_DELAY 3 //used to determine speed of invader animation
+   #define DEBOUNCE_BUTTON_TIME_DELAY 3// used for debounce stuff
+
+   typedef struct{
+      unsigned char active;
+      unsigned long col;
+      unsigned long page;
+   } laser;
+
+   typedef struct{
+      unsigned char active;
+      int col;
+      int page;
+   } invader_laser_list;
+      
+   extern xdata laser lasers[MAX_LASER];
+   extern xdata invader_laser_list invader_lasers[MAX_LASER];
+   // Fart deluxe variables (aka the bounding edges of the army)
+   extern xdata unsigned long army_box_right;
+   extern xdata unsigned long	army_box_left;
+   extern int invaders_alive; 
+   extern int army_page_offset;
+   extern int army_col_offset; 
+   extern int invader_left_dead;
+   extern int invader_right_dead;
+   extern int set_tank_pos;
+   extern int player_lives; 
+   extern int player_score;
+
+   //master array that holds the state of each invader
+   extern xdata unsigned char invader_array[16];
+   #endif
+
+Source Code
+-----------
+.. _source_code:
+
+
+debug.c 
+^^^^^^^
+.. _debug.c:
+
+.. code-block:: c 
+
+   #include <C8051F020.h>
+   #include <init.h>
+   #include <lcd.h>
+   #include <interrupts.h>
+
+   unsigned char debug_line_pos;
+
+   void debug_write_char(unsigned char page, unsigned char col, char ch)
+   {
+      int i = page * 128 + col;
+      int j = (ch - ' ') * 5;
+      unsigned char k;
+      
+      for(k=0; k<5;++k)
+      {
+         screen[i + k] = font5x8[j + k];    // OR operator paints in character rather than deleting pixels and refilling. Allows for smoother transistions?
+      }
+   }
+
+   /* 	---------- Debug Pot Position ----------
+      This function is used to debug the potentiometer. It will
+      take the value of the pot and display it on the LCD. 
+   */
+   void debug_pot_position(unsigned char x)
+   {
+      debug_write_char(0,0, (x/100)%10 + 0x30);
+      debug_write_char(0, 6, (x/10)%10 + 0x30);
+      debug_write_char(0, 12, x%10 + 0x30);
+   }
+   /*  ---------- Debug Army Position ----------
+      This function is used to debug the army position. It will
+      take the value of the army and display it on the LCD.
+   */
+   void debug_army_position(signed char x)
+   {
+      //if x is negative, display a negative sign
+      if(x < 0)
+      {
+         debug_write_char(0,20, '-');
+         x = -x; //convert negative x to positive for correct display
+      }
+      debug_write_char(0,26, (x/100)%10 + 0x30);
+      debug_write_char(0,32, (x/10)%10 + 0x30);
+      debug_write_char(0,38, x%10 + 0x30);
+   }
+   void debug_draw_vertical_line(void)
+   {
+      unsigned char i;
+      if(pot_flag ==1)
+      {
+         pot_flag = 0; //reset flag
+         debug_line_pos = ((avg * 128L) >> 12); //convert avg to be between 00-128
+         debug_pot_position(debug_line_pos); //debug for pot	
+         for(i=0; i<8; ++i)
+         {
+               screen[128 * i + debug_line_pos] = 0xFF; //draw vertical line
+         }
+         
+      }
+   }
+
+
+
+

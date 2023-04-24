@@ -743,6 +743,893 @@ debug.c
       }
    }
 
+init.c
+^^^^^^
+.. _init.c:
+
+.. code-block:: c
+
+   #include <C8051F020.h>
+   #include <lcd.h>
+   #include <init.h>
+
+   long sum;
+   unsigned int avg;
+
+   void init(void)
+   {
+   //---------------- Initialization Code -------------------
+      WDTCN = 0xde;   // disable watchdog
+      WDTCN = 0xad;
+      XBR2 = 0x40;    // enable port output
+
+      OSCXCN = 0x67;            // turn on external crystal
+      TMOD = 0x21;            // wait 1ms using T1 mode 2
+      TH1 = -167;                // 2MHz clock, 167 counts - 1ms
+      TR1 = 1;
+      while(TF1 == 0){ }          // wait 1ms
+      while(!(OSCXCN & 0x80)){ }  // wait till oscillator stable
+      OSCICN = 8;                    // switch over to 22.1184MHz
+
+      //--------------------- Registers ------------------------
+      REF0CN = 0x03; // enable ADC
+      ADC0CN = 0x8C; // ADC0 Control Register
+      ADC0CF = 0x40; // ADC0 Configuration Register gain 1
+      AMX0SL = 0x06; // AMUX0 Channel Select Register
+      IE = 0x82;   // interupt enable
+      EIE2 = 0x06; // Enable timer4 and ADC
+      EIP2 = 0x04; // Highest Priority for timer4
+
+      //---------------------- Timer 0 -------------------------
+      /*
+         Description of timer0 here. See function in invaders.c
+      */
+      TL0 = -18432 >> 8; //get high byte
+      TH0 = -18432; //get low byte
+      //turn on timer0
+      TR0 = 1;
+      
+      //---------------------- Timer 2 -------------------------
+      /*
+         Used for the ADC
+      */
+      T2CON = 0x04;   // timer 2
+      RCAP2H = -1844 >> 8; //get high byte
+      RCAP2L = -1844; //get low byte
+
+      //-------------- Initialization for ADC ------------------
+      sum = 0;
+      avg = 0;
+      
+      //---------------------- Timer 4 -------------------------
+      /*
+         Used for the DAC
+      */
+      DAC0CN = 0x94; //used for the DAC set to timer4 overflow left most 
+      T4CON = 0x04;
+      RCAP4H = 0;
+      RCAP4L = 0; 
+
+      CKCON = 0x60; // Remove divide by 12 for timer4 and timer2
+
+      init_lcd(); // initialize the LCD screen
+   }
+
+interrupts.c
+^^^^^^^^^^^^
+.. _interrupts.c:
+
+.. code-block:: c 
+
+   #include <C8051F020.h>
+   #include <init.h>
+
+   #define TIMER0_VALUE 1
+
+   //----------------------ADC Variables-------------------------
+   bit pot_flag;
+   unsigned int adc_value; 
+   unsigned int count; //used to determine when to update the adc value
+
+   //------------------- Sound Variables ------------------------
+   unsigned long duration = 0;		// number of cycles left to output
+   signed long envelope = 512;
+   code unsigned char sine[] = { 176, 217, 244, 254, 244, 217, 176, 128, 80, 39, 12, 2, 12, 39, 80, 128 };
+   unsigned char phase = sizeof(sine)-1;	// current point in sine to output
+
+   //----------------------Timer0 Variables------------------------
+   unsigned int timer0 = TIMER0_VALUE;
+   bit timer0_flag;
+
+   /*	---------- DAC Interrupt Serivce Routine ----------
+      This function is used for the DAC which is used to play the 
+      sounds.   
+   */ 
+   void interrupt_dac(void) interrupt 16
+   {
+      T4CON &= 0x7F; //clear the flag
+      DAC0H = ((sine[phase] - 128) * envelope >> 10) + 128;
+      if(phase<sizeof(sine)-1){phase++;}
+      else if (duration>0){
+         phase = 0;
+         duration--;
+         if(envelope>0){envelope--;}
+         if(duration == 0){RCAP4H = RCAP4L = 0;} //reset timer4 H and L to zero
+      }
+   }
+
+   /*	---------- ADC Interrupt Serivce Routine ----------
+      This function is used for the ADC. If the ADC0 interrupt flag
+      is one (1) the program will be directed here. This service routine
+      will happen roughly every 1 ms (If the clock is divide by 12). 
+      An average is taken to avoid any noisey signal coming from the 
+      pot on the dev board. This code we are taking 64 samples. Then 
+      dividing by 64 by shifting right six (6). 
+   */ 	
+   void interrupt_adc(void)interrupt 15
+   {
+      AD0INT = 0; //clear ADC0 interrupt flag
+      adc_value = (ADC0H << 8) | ADC0L; //OR the two High and Low bits together
+      sum += adc_value; //continually sum the pot
+      count++; //add to count
+
+      if(count >= 64)
+      {
+         avg = 0; //clear average
+         avg = (sum >> 6);
+         count = 0; //reset count
+         sum = 0; //reset sum
+         pot_flag = 1; //set pot flag}		
+      }	
+   }
+
+   /* ----------- Timer 0 Interrupt Service Routine --------
+      Refer to page 117/272 in the data sheet for where the #1 comes from for timer0.
+      timer0 overflows about every 10ms
+
+      TODO: figure out how fast the timer 0 is running with an oscilloscope. Add
+      information to READTHEDOCS
+   */
+   void interrupt_timer0(void)interrupt 1
+   {
+      TL0 = -18432 >> 8; //get high byte
+      TH0 = -18432; //get low byte
+
+      //if the timer is not zero, decrement it
+      if(timer0 != 0)
+      {
+         timer0--;
+      }
+      else
+      {
+         timer0 = TIMER0_VALUE;
+         timer0_flag = 1;
+      }
+   }
+
+invaders.c
+^^^^^^^^^^
+.. _invaders.c:
+
+.. code-block:: c 
+
+   #include <C8051F020.h>
+   #include <lcd.h>
+   #include <notes.h>
+   #include <init.h>
+   #include <interrupts.h>
+   #include <debug.h>
+   #include "invaders.h"
+   #include "utils.h"
+
+   //-------------------------- TODO ----------------------------
+   // - Fix sound effects
+   // - Validate timer0 to be 10ms
+   // - Fix debug vertical line since it doesn't erase itself
+   // - Add logic to determine if the edge monsters have been killed and update the right_limit_idx and left_limit_idx appropriately 
+   // - IMPORTANT: logic not fully tested yet.
+
+
+
+   //-------------------- BEGIN VARIABLES -----------------------
+
+   //------------------ Sprite Texture Table --------------------
+   char sprite_texture_down[10] = {0x70, 0x18, 0x7D, 0xB6, 0x3C, 0x3C, 0xB6, 0x7D, 0x18, 0x70};
+
+   //------------------- Button Variables -----------------------
+   sbit fire = P3^6;
+   sbit start = P3^7;
+   bit last_start = 0;
+   bit last_fire = 0;
+
+   //------------------- Laser Variables ------------------------
+   unsigned char laser_time = LASER_ANIMATION_TIME_DELAY; //used to determine speed of laser
+   unsigned int current_laser_pos = 0; 
+
+
+
+   xdata unsigned char invader_array[16] = {1,1,1,1,1,1,1,1,
+                                    1,1,1,1,1,1,1,1};
+
+
+   xdata laser lasers[MAX_LASER];
+   xdata invader_laser_list invader_lasers[MAX_LASER];
+
+   // Fart deluxe variables (aka the bounding edges of the army)
+   xdata unsigned long army_box_right = 100;
+   xdata unsigned long army_box_left = 20;
+
+
+
+   //------------------- Cannon Variables -----------------------
+
+
+   //--------------------- Invader Array ------------------------
+
+   bit sprite_figure = 0; //used to determine which sprite to draw refer to draw_army_animation() function
+   unsigned char invader_animation_time = INVADER_ANIMATION_TIME_DELAY; //used to determine speed of invader animation
+   unsigned char invader_array_page = 0; //used to determine which page the army is on
+   signed char invader_array_col = 0; //used to determine which column the army is on
+   unsigned char dir = 0; //used to determine which direction the army is moving
+
+   unsigned char right_limit_idx = 7; //used to determine if the army has reached the right edge
+   signed char left_limit_idx = 0; //used to determine if the army has reached the left edge
+
+   unsigned char invader_right_limit_array[8] = {102,89,76,63,50,37,24,11}; //limits for the right edge of the screen does depend on the 'INVADERS_COL_START' define
+   signed char invader_left_limit_array[8] = {-14,-27,-40,-53,-66,-79,-92,-105};
+
+   int invaders_alive = 16;
+   int army_page_offset = 0;
+   int army_col_offset = 13; 
+   int army_dir_toggle = 0;
+   int army_width = MAX_INVADERS/2;
+   int invader_left_dead;
+   int invader_right_dead;
+   int player_score = 0;
+   int set_tank_pos;
+   int player_lives = 3;
+   int not_dead = 1;
+
+   //------------------- Debounce Button ------------------------
+   unsigned char debounce_time = DEBOUNCE_BUTTON_TIME_DELAY;
+
+
+   //-------------------- END VARIABLES -------------------------
+
+   //----------------------- Functions --------------------------
+   void write_char(unsigned char page, unsigned char col, char ch)
+   {
+      int i = page * 128 + col;
+      int j = (ch - ' ') * 5;
+      unsigned char k;
+      
+      for(k=0; k<5;++k)
+      {
+         screen[i + k] = font5x8[j + k];    // OR operator paints in character rather than deleting pixels and refilling. Allows for smoother transistions?
+      }
+   }
+   void write_string(unsigned char page, unsigned char col, char *temp)
+   {
+      while(*temp){
+         write_char(page, col, *temp);
+         temp++;
+         col+=6;
+      }
+   }
+   /**
+   * Writes a byte value to a specific location on the screen.
+   */
+   void write_byte(unsigned char page, unsigned char col, unsigned char val)
+   {
+      if(col < 0 || col > 127){
+         return;
+      }
+      screen[128 * page + col] = val;
+   }
+   /**
+   * Draws a sprite on the screen.
+   */
+   void draw_sprite(unsigned char page, unsigned char col, unsigned char figure)
+   {
+      static unsigned int code sprite_texture_tb[] = {
+         0x70, 0x18, 0x7D, 0xB6, 0x3C, 0x3C, 0xB6, 0x7D, 0x18, 0x70, //first sprite
+         0x0E, 0x98, 0x7D, 0x36, 0x3C, 0x3C, 0x36, 0x7D, 0x98, 0x0E};//second sprite
+      unsigned char frame = figure * 10; //if figure is 0 then frame = 0, if figure is 1 then frame = 10
+
+      unsigned char i = 0;
+      for(i=0; i<10; i++)
+      {
+         write_byte(page, col+i, sprite_texture_tb[frame+i]);
+      }
+   }
+   void add_laser(int col)
+   {
+      int ii;
+      for(ii = 0; ii < MAX_LASER; ii++){
+         if(lasers[ii].active == 0){
+            lasers[ii].active = 1;
+            lasers[ii].page = 7;
+            lasers[ii].col = col;
+         }
+      }
+   }
+   void update_lasers()
+   {
+      int ii;
+      for(ii = 0; ii < MAX_LASER; ii++){
+         if(lasers[ii].active == 1){
+            screen[(lasers[ii].page * 128) + lasers[ii].col] = 0x00;
+            lasers[ii].page--;
+            screen[(lasers[ii].page * 128) + lasers[ii].col] = 0xFF;
+            if(lasers[ii].page < 1){
+               lasers[ii].active = 0;
+            }
+         }
+      }
+   }
+   void draw_army(unsigned char page, unsigned char col, unsigned char figure)
+   {
+      unsigned char i;
+      unsigned char j;
+      for(i = 0; i < 2; i++){
+         for(j = 0; j < 8; j++){
+            if(invader_array[i*8+j] == 1)//invader_array is a 16 element array
+            {
+               draw_sprite(page+i, col+j*13, figure);
+            }
+            else
+            {
+               continue; //if invader value is 0 then skip it
+            }
+         }
+      }
+   }
+   void write_cannon(int x, unsigned char size)
+   {
+      int i = 0;
+      write_byte(7, x, 0xFF);
+      write_byte(7,x+1, 0xFE);
+      write_byte(7,x-1, 0xFE);
+      write_byte(7,x+2, 0xFC);
+      write_byte(7,x-2, 0xFC);
+      
+      for(i = 0; i < size; i++){
+         write_byte(7,x+3+i, 0xF8);
+         write_byte(7,x-3-i, 0xF8);
+      }
+      for(i = size; i < 20; i++){
+         write_byte(7,x+4+i, 0x00);
+         write_byte(7,x-4-i, 0x00);
+      }
+   }
+   void write_sprite(int page, int col)
+   {
+      int i; 
+      for(i = 0; i < 10; i++){
+         // if(sprite_toggle == 0){
+            screen[128 * page + col + i] = sprite_texture_down[i];
+         // }else{
+         // 	screen[128 * page + col + i] = sprite_texture_down[i];
+         // }
+      }
+      // sprite_toggle = !sprite_toggle;	
+   }
+
+
+   /* 	---------- Play Notes ----------
+      This function is used to play notes for the game.
+   */
+   void play_note(int note, int dur)
+   {
+      RCAP4H = -note >> 8;
+      RCAP4L = -note;
+      duration = (dur*1382L)/note;
+      envelope = 512;
+   }
+
+   //---------------------- END FUNCTIONS -----------------------
+
+   //----------------------- BEGIN MAIN -------------------------
+   void main()
+   {
+      unsigned char ii;
+      int margin;
+      int padding_left;
+      int padding_right;
+      invader_left_dead = 0;
+      invader_right_dead = 0;
+      lasers[0].active = 0;
+      lasers[1].active = 0;
+      lasers[2].active = 0;
+      invader_lasers[0].active = 0;
+      invader_lasers[1].active = 0;
+      invader_lasers[2].active = 0;
+      
+      //--------------------Initialize Code---------------------
+      //use init.c to configure the initilization 
+      //refer to init.c & init.h for more information
+      init();
+
+      
+      
+      for(ii = 0; ii < MAX_LASER; ii++){
+         lasers[ii].page = 0;
+         lasers[ii].col = 0;
+         lasers[ii].active = 0;
+      }
+
+      //--------------------- START SCREEN ---------------------
+      while(start == 1)
+      {
+         write_string(1,46,"READY?");
+         write_string(6,22,"PRESS START TO");
+         write_string(7,49,"BEGIN");
+         draw_army(3,13,0);
+         refresh_screen();
+         //debug_draw_vertical_line(); //draws vertical line TODO: fix so only single line
+      }
+      blank_screen(); //clear screen after start
+
+      //--------------------- MAIN LOOP ---------------------
+      while(not_dead)
+      {		
+         if(pot_flag == 1) //If pot_flag == 1 update the position of the cannon
+         {
+            pot_flag = 0; //reset flag
+            set_tank_pos = ((avg * 128L) >> 12); //convert avg to be between 00-128
+            write_cannon(set_tank_pos, 3); //write cannon
+            // debug_pot_position(set_tank_pos); //debug for pot
+            refresh_screen();
+         }
+         if(timer0_flag == 1)
+         {
+            timer0_flag = 0;//reset flag from interrupts.c file
+            laser_time--;
+            invader_animation_time--;
+            debounce_time--;
+         }
+         if(laser_time == 0)
+         {
+            laser_time = LASER_ANIMATION_TIME_DELAY; //reset laser_time
+            update_lasers();
+            collision_detect();
+         }
+         if(invader_animation_time == 0)
+         {
+            invader_animation_time = INVADER_ANIMATION_TIME_DELAY; //reset animation time
+            blank_screen();
+            update_lasers();
+            draw_army(army_page_offset, army_col_offset, 0);
+            
+            army_width = invaders_alive / 2;
+         
+
+
+            if(invader_array[invader_left_dead] == 0){
+               if(invader_array[invader_left_dead + 8] == 0){
+                  invader_left_dead++;
+               }
+            }
+            if(invader_array[7 - invader_right_dead] == 0){
+               if(invader_array[7 - invader_right_dead + 8] == 0){
+                  invader_right_dead++;
+               }
+            }			
+
+            margin = 1;
+            padding_right = (invader_right_dead * 13) + 13;
+            padding_left = (invader_left_dead * 13) + 13;
+            if(army_dir_toggle == 0){
+               army_col_offset++;
+               if(army_col_offset > padding_right + (13-margin)){
+                  army_page_offset++;
+                  army_dir_toggle = !army_dir_toggle;
+               }
+            }else{
+               army_col_offset--;
+               if(army_col_offset < margin - padding_left + 13){
+                  army_page_offset++;
+                  army_dir_toggle = !army_dir_toggle;
+               }
+            }
+            collision_detect();
+            debug_army_position((char)player_score);
+            debug_pot_position((char)player_lives);
+            
+            update_invader_lasers();
+            
+            refresh_screen();
+            P1^=1; //debug led light for animation
+         }
+         //if(debounce_time == 0)
+         //{
+            if(fire == 0){
+               add_laser(set_tank_pos);
+               //play_note(A4, 10);
+               invader_laser();
+            }
+            //debounce_time = DEBOUNCE_BUTTON_TIME_DELAY;
+
+         //}
+         if(player_lives <= 0){
+            not_dead = 0;
+         }
+      }
+      while(!not_dead){
+         blank_screen();
+         write_string(6,22,"DEAD");
+         refresh_screen();
+      }
+      //--------------------- END MAIN LOOP ---------------------
+   }
+   //------------------------ END MAIN -------------------------
+
+
+lcd.asm
+^^^^^^^
+.. _lcd.asm:
+
+.. code-block:: assembly
+
+   public init_lcd, refresh_screen, blank_screen, screen, font5x8;
+   ?PR?lcd segment code
+      rseg ?PR?lcd
+
+   $include (c8051f020.inc)
+   LCD_CMD   equ 8000h ; Set this to the address of the command register
+   LCD_DAT   equ 8100h ; Set this to the address of the data register
+   LCD_RESET equ 10h ; Mask that selects the reset line on P4 (e.g. for P4.4 use 10H)
+
+   ;
+   ; subroutines wcom and w_com_a
+   ;   Writes a byte to the LCD command register after checking the busy flag first
+   ;   Assumes the external memory interface is configured for split mode with bank
+   ;   select.
+   ; inputs:
+   ;   wcom:   r0  = byte to write to command register
+   ;   wcom_a: acc = byte to write to command register
+   ; outputs: none
+   ; destroys:
+   ;   wcom:   EMI0CN
+   ;   wcom_a: EMI0CN, r0
+   wcom_a:	mov	r0,a		; save acc in R0 while we check BUSY
+   wcom:	mov	EMI0CN,#HIGH LCD_CMD ; command/status register
+   wcom1:	movx	a,@r0		; r0 has no relevance here
+      jb	acc.7,wcom1	; wait for not BUSY
+      mov	a,r0		; get the actual data to write
+      movx	@r0,a		; write the command, r0 is irrelevant here
+      ret
+   ;
+   ; subroutines wdat and w_dat_a and w_datc
+   ;   Writes a byte to the LCD data register after checking the busy flag first
+   ;   Assumes the external memory interface is configured for split mode with bank
+   ;   select.
+   ; inputs:
+   ;   wdat:   r0  = byte to write to data register
+   ;   wdat_a: acc = byte to write to data register
+   ;   wdat_c: acc = dptr-relative index (dptr[acc]) of byte to write to data register 
+   ; outputs: none
+   ; destroys:
+   ;   wdat:   EMI0CN
+   ;   wdat_a: EMI0CN, r0
+   ;   wdat_c: EMI0CN, r0
+   wdat_c:	movc	a,@a+dptr	; lookup byte to write (handy for fonts)
+   wdat_a:	mov	r0,a		; save it in R0 while we check BUSY
+   wdat:	mov	EMI0CN,#HIGH LCD_CMD ; command/status register
+   wdat1:	movx	a,@r0		; r0 has no relevance here
+      jb	acc.7,wdat1	; wait for not BUSY
+      mov	EMI0CN,#HIGH LCD_DAT	; data register
+      mov	a,r0		; actual data to write
+      movx	@r0,a		; write the data, r0 is irrelevant here
+      ret
+   ;
+   ; Initialize controller for S64128N LCD module
+   ;   inputs: none
+   ;   outputs: none
+   ;   destroys: r0, r2, r3, dptr
+   ;
+   init_lcd:
+      mov	p4,#not LCD_RESET
+      mov	emi0cf,#28h     ; B5: P4-7, B4: multiplexed, B3-2: split bank
+      mov	emi0tc,#4Dh     ; pulse width 4 sysclock cycles
+      mov	p74out,#0FFH    ; push-pull
+      orl p4,#LCD_RESET   ; assert then deassert reset
+
+      mov	R0,#02FH	; Boost on, voltage Reg and follower on
+      call	wcom
+      mov	R0,#0A2H;	; 1/9bias selected
+      call	wcom
+      mov	R0,#0A1H	; reverse segment driver output seg131-seg0
+      call	wcom
+      mov 	R0,#0C0H	; common output mode com0 to com63
+      call 	wcom
+      mov 	R0,#024H	; Ra/Rb ratio
+      call 	wcom
+      mov 	R0,#081H	; electronic vloume mode set
+      call 	wcom
+      mov 	R0,#026H	; contrast
+      call 	wcom
+      mov 	R0,#040H	; display line address = 0
+      call 	wcom
+      mov 	R0,#0A6H	; normal video
+      call 	wcom
+      mov 	R0,#0AFH	; display on
+      call 	wcom
+      call	blank_screen	; fall through to refresh_screen
+   ;
+   ; subroutine refresh_screen
+   ;   Copies 1k bytes of data from external address 0 to the LCD. Bytes 0-7F go
+   ;   into page 0, bytes 80-FF go to page 1 etc.
+   ; inputs: none
+   ; outputs: none
+   ; destroys: r0, r2, r3, dptr, EMI0CN
+   ;
+   refresh_screen:
+      mov	dptr,#0		; start of 1k block of memory
+      mov	r2,#0B0H	; command to set page number to 0
+   page_loop:
+      mov	a,r2		; set page number n, n = 0, 1, 2...7
+      call	wcom_a
+      mov	a,#04H		; set column number to 4. If LCD is not
+      call	wcom_a		; inverted, you will want to set column
+      mov	a,#10H		; number to 0.
+      call	wcom_a
+      mov	r3,#128		; copy 128 bytes
+   byte_loop:
+      movx	a,@dptr		; get byte from memory
+      call	wdat_a		; and write it to the LCD
+      inc	dptr
+      djnz	r3,byte_loop
+      inc	r2		; advance to next page, but bail if it is 8 (B8)
+      cjne	r2,#0B8H,page_loop
+      ret
+
+   blank_screen:
+      mov	dptr,#0
+      mov	a,#00h
+      
+   blank_loop:
+      movx @dptr,a
+      inc	dptr
+      mov	b,dph
+      jnb	b.2,blank_loop
+      ret
+
+   font5x8:
+   db  000H, 000H, 000H, 000H, 000H ;  
+   db  000H, 006H, 05FH, 006H, 000H ; !
+   db  007H, 003H, 000H, 007H, 003H ; "
+   db  024H, 07EH, 024H, 07EH, 024H ; #
+   db  024H, 02BH, 06AH, 012H, 000H ; $
+   db  063H, 013H, 008H, 064H, 063H ; %
+   db  036H, 049H, 056H, 020H, 050H ; &
+   db  000H, 007H, 003H, 000H, 000H ; '
+   db  000H, 03EH, 041H, 000H, 000H ; (
+   db  000H, 041H, 03EH, 000H, 000H ; )
+   db  008H, 03EH, 01CH, 03EH, 008H ; *
+   db  008H, 008H, 03EH, 008H, 008H ; +
+   db  000H, 0E0H, 060H, 000H, 000H ; ,
+   db  008H, 008H, 008H, 008H, 008H ; -
+   db  000H, 060H, 060H, 000H, 000H ; .
+   db  020H, 010H, 008H, 004H, 002H ; /
+   db  03EH, 051H, 049H, 045H, 03EH ; 0
+   db  000H, 042H, 07FH, 040H, 000H ; 1
+   db  062H, 051H, 049H, 049H, 046H ; 2
+   db  022H, 049H, 049H, 049H, 036H ; 3
+   db  018H, 014H, 012H, 07FH, 010H ; 4
+   db  02FH, 049H, 049H, 049H, 031H ; 5
+   db  03CH, 04AH, 049H, 049H, 030H ; 6
+   db  001H, 071H, 009H, 005H, 003H ; 7
+   db  036H, 049H, 049H, 049H, 036H ; 8
+   db  006H, 049H, 049H, 029H, 01EH ; 9
+   db  000H, 06CH, 06CH, 000H, 000H ; :
+   db  000H, 0ECH, 06CH, 000H, 000H ; ;
+   db  008H, 014H, 022H, 041H, 000H ; <
+   db  024H, 024H, 024H, 024H, 024H ; =
+   db  000H, 041H, 022H, 014H, 008H ; >
+   db  002H, 001H, 059H, 009H, 006H ; ?
+   db  03EH, 041H, 05DH, 055H, 01EH ; @
+   db  07EH, 011H, 011H, 011H, 07EH ; A
+   db  07FH, 049H, 049H, 049H, 036H ; B
+   db  03EH, 041H, 041H, 041H, 022H ; C
+   db  07FH, 041H, 041H, 041H, 03EH ; D
+   db  07FH, 049H, 049H, 049H, 041H ; E
+   db  07FH, 009H, 009H, 009H, 001H ; F
+   db  03EH, 041H, 049H, 049H, 07AH ; G
+   db  07FH, 008H, 008H, 008H, 07FH ; H
+   db  000H, 041H, 07FH, 041H, 000H ; I
+   db  030H, 040H, 040H, 040H, 03FH ; J
+   db  07FH, 008H, 014H, 022H, 041H ; K
+   db  07FH, 040H, 040H, 040H, 040H ; L
+   db  07FH, 002H, 004H, 002H, 07FH ; M
+   db  07FH, 002H, 004H, 008H, 07FH ; N
+   db  03EH, 041H, 041H, 041H, 03EH ; O
+   db  07FH, 009H, 009H, 009H, 006H ; P
+   db  03EH, 041H, 051H, 021H, 05EH ; Q
+   db  07FH, 009H, 009H, 019H, 066H ; R
+   db  026H, 049H, 049H, 049H, 032H ; S
+   db  001H, 001H, 07FH, 001H, 001H ; T
+   db  03FH, 040H, 040H, 040H, 03FH ; U
+   db  01FH, 020H, 040H, 020H, 01FH ; V
+   db  03FH, 040H, 03CH, 040H, 03FH ; W
+   db  063H, 014H, 008H, 014H, 063H ; X
+   db  007H, 008H, 070H, 008H, 007H ; Y
+   db  071H, 049H, 045H, 043H, 000H ; Z
+   db  000H, 07FH, 041H, 041H, 000H ; [
+   db  002H, 004H, 008H, 010H, 020H ; \
+   db  000H, 041H, 041H, 07FH, 000H ; ]
+   db  004H, 002H, 001H, 002H, 004H ; ^
+   db  080H, 080H, 080H, 080H, 080H ; _
+   db  000H, 003H, 007H, 000H, 000H ; `
+   db  020H, 054H, 054H, 054H, 078H ; a
+   db  07FH, 044H, 044H, 044H, 038H ; b
+   db  038H, 044H, 044H, 044H, 028H ; c
+   db  038H, 044H, 044H, 044H, 07FH ; d
+   db  038H, 054H, 054H, 054H, 008H ; e
+   db  008H, 07EH, 009H, 009H, 000H ; f
+   db  018H, 0A4H, 0A4H, 0A4H, 07CH ; g
+   db  07FH, 004H, 004H, 078H, 000H ; h
+   db  000H, 000H, 07DH, 040H, 000H ; i
+   db  040H, 080H, 084H, 07DH, 000H ; j
+   db  07FH, 010H, 028H, 044H, 000H ; k
+   db  000H, 000H, 07FH, 040H, 000H ; l
+   db  07CH, 004H, 018H, 004H, 078H ; m
+   db  07CH, 004H, 004H, 078H, 000H ; n
+   db  038H, 044H, 044H, 044H, 038H ; o
+   db  0FCH, 044H, 044H, 044H, 038H ; p
+   db  038H, 044H, 044H, 044H, 0FCH ; q
+   db  044H, 078H, 044H, 004H, 008H ; r
+   db  008H, 054H, 054H, 054H, 020H ; s
+   db  004H, 03EH, 044H, 024H, 000H ; t
+   db  03CH, 040H, 020H, 07CH, 000H ; u
+   db  01CH, 020H, 040H, 020H, 01CH ; v
+   db  03CH, 060H, 030H, 060H, 03CH ; w
+   db  06CH, 010H, 010H, 06CH, 000H ; x
+   db  09CH, 0A0H, 060H, 03CH, 000H ; y
+   db  064H, 054H, 054H, 04CH, 000H ; z
+   db  008H, 03EH, 041H, 041H, 000H ; {
+   db  000H, 000H, 077H, 000H, 000H ; |
+   db  000H, 041H, 041H, 03EH, 008H ; }
+   db  002H, 001H, 002H, 001H, 000H ; ~
+   db  006H, 009H, 009H, 006H, 000H ; ?
+
+      xseg
+   screen:	ds 1024
+
+      end
+
+
+utils.c 
+^^^^^^^
+.. _utils.c
+
+.. code-block:: c 
+
+   #include <C8051F020.h>
+   #include <init.h>
+   #include <lcd.h>
+   #include <interrupts.h>
+   #include "invaders.h"
+
+   void collision_tank_detect(){
+      int ii;
+      int col_temp;
+      int page_temp;
+
+      for(ii = 0; ii < MAX_LASER; ii++){
+         col_temp = invader_lasers[ii].col;
+         page_temp = invader_lasers[ii].page;
+
+         if(page_temp > 6){
+            if((col_temp < set_tank_pos + 5) && (col_temp > set_tank_pos - 5) && invader_lasers[ii].active == 1){
+               player_lives--;
+               invader_lasers[ii].active = 0;
+               break;
+            }
+         }
+      }
+   }
+
+
+   /*
+   * Function: Detect collision 
+   * between a laser and a sprite
+   * ---------------------------- 
+   * Globals:
+   *   unsigned int: left boundry of army block
+   *   unsigned int: right boundry of army block
+   *   unsigned char array: army block    
+   *   laser lasers: array of lasers
+   */
+   void collision_detect(){
+      int SPRITE_RATIO = 5042;
+      int ii;
+      unsigned long diff;
+      unsigned long TEMP;
+      TEMP = 100;
+      collision_tank_detect();
+      for(ii = 0; ii < MAX_LASER; ii++){
+         if(lasers[ii].active){
+               if(lasers[ii].page <= 0){
+                  lasers[ii].active = 0;
+               }
+               else if(lasers[ii].page <= army_page_offset+1){
+                  if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2))){
+                     //if(lasers[ii].page == lowest_active_sprite){ // The laser is at the same page as an active sprite. Next check for col.
+                           unsigned long col_temp = lasers[ii].col;
+                     diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
+                           diff = diff * SPRITE_RATIO;
+                           diff = MAX_INVADERS - (diff >> 16) - 1;
+                           if(invader_array[diff] == 1){
+                              invader_array[diff] = 0;
+                              lasers[ii].active = 0;
+                        player_score++;
+                        
+                           }
+                  }
+
+                  if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2)) && lasers[ii].active == 1){
+                           //if(lasers[ii].page == lowest_active_sprite){ // The laser is at the same page as an active sprite. Next check for col.
+                              unsigned long col_temp = lasers[ii].col;
+                              diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
+                              diff = diff * SPRITE_RATIO;
+                              diff = MAX_INVADERS/2 - (diff >> 16) - 1;
+                              if(invader_array[diff] == 1){
+                                 invader_array[diff] = 0;
+                                 lasers[ii].active = 0;
+                           player_score++;
+                                 
+                              }
+                           
+                  }
+               }
+         }
+      }
+   }
+
+   /*
+   * Function: Shoot invader laser
+   * ---------------------------- 
+   * Globals:
+   *   unsigned int: left boundry of army block
+   *   unsigned int: right boundry of army block
+   *   unsigned char array: army block    
+   *   laser lasers: array of lasers
+   */
+
+   void add_invader_laser(int page, int col)
+   {
+      int ii;
+      for(ii = 0; ii < MAX_LASER; ii++){
+         if(invader_lasers[ii].active == 0){
+            invader_lasers[ii].active = 1;
+            invader_lasers[ii].page = page;
+            invader_lasers[ii].col = col;
+            break;
+         }
+      }
+   }
+   void update_invader_lasers()
+   {
+      int ii;
+      for(ii = 0; ii < MAX_LASER; ii++){
+         if(invader_lasers[ii].active == 1){
+            screen[(invader_lasers[ii].page * 128) + invader_lasers[ii].col] = 0x00;
+            invader_lasers[ii].page++;
+            screen[(invader_lasers[ii].page * 128) + invader_lasers[ii].col] = 0xFF;
+            if(invader_lasers[ii].page > 7){
+               invader_lasers[ii].active = 0;
+            }
+         }
+      }
+   }
+   void invader_laser(){
+      // Call random gen here
+      int random_pos = 1;
+      add_invader_laser((int)army_page_offset+1, (int)army_col_offset + (13 * random_pos)+5);
+   }
+
+
 
 
 

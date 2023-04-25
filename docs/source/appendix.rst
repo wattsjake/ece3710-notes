@@ -1,9 +1,23 @@
-Appendices
+Appendix A
 ==========
-.. _appendices:
+.. _appendix_a:
 
-This is the appropriate place to put items for reference only, such as software
-listings. 
+Schematic
+---------
+.. _schematic:
+
+    .. image:: images/project02-space-invaders-schematic-rev1-2.png
+        :width: 600
+        :height: 450
+        :alt: 8051 Schematic
+        :align: center
+
+Space Invaders Schematic
+
+
+Appendix B
+==========
+.. _appendix_b:
 
 Include Files
 -------------

@@ -117,28 +117,12 @@ Dependencies
 .. _dependencies:
 
 1. External 9v DC supply
-2. 64x128 pixel LCD
-3. Reset button, start button, fire button
-4. Potentiometer to control the position of the laser cannon
-5. Laser cannon with height of seven pixels and variable width of 7, 9, 11, or 13 pixels depending on the DIP switch
-6. Invaders with a height of 6-8 pixels and width of 10 pixels for front row and narrower for back row
-7. 4-digit score displayed continuously
-8. Initial wave of alien attackers when start button is pressed
-9. Display showing laser cannon and 2 rows of 8 alien space invaders on the left side of the screen at the beginning of each wave
-10. Invader formation moves to the right, fires lasers randomly, and reverses direction when reaching the side of the display
-11. Invaders move left or right one pixel at a time, with movement speed roughly inversely proportional to the number of invaders on the screen
-12. Display up to 8 simultaneous laser bursts from the invaders and up to 4 simultaneous laser bursts from the player's laser cannon
-13. New wave with aliens arrayed 8 pixels closer and increased movement speed when all invaders are destroyed
-14. Game over if a laser burst hits the laser cannon or if an invader reaches the bottom row, with "GAME OVER" displayed until the start button is pressed
-15. Sound generated for firing laser cannon, destroying an invader, or game over, with different sounds for each event and a maximum length of 250 milliseconds.
+
 
 Theory of Operation
 --------------------
 .. _theory_of_operation:
 
-.. note::
-
-   Add information about the theory of operation here.
 
 1. **Input Interface:** The input interface block includes the potentiometer, start, fire, and reset buttons. The potentiometer is used to change the location of the laser     cannon on the screen, while the start, fire, and reset buttons are used to initiate the game, fire the laser, and reset the game, respectively. The input signals are read by the microcontroller and processed to update the game state.
 
@@ -149,28 +133,6 @@ Theory of Operation
 4. **Sound:** The sound block generates sound effects for the game, including the firing of the laser cannon and any other relevant sound effects.
 
 All of these functional blocks work together to create the game experience. The input interface provides the user with a way to interact with the game, the game logic implements the rules of the game and updates the game state, the graphics block generates the visual elements of the game, and the sound block adds auditory feedback to the gameplay. Together, these blocks create an immersive and engaging gaming experience for the player.
-
-Below is an image of the hardware of the game. The hardware consists of the following components:
-
-    .. image:: images/overview-8051-periferals.jpg
-        :width: 350
-        :height: 750
-        :alt: 8051 Periferals
-        :align: center
-
-Figure 2. 8051 Periferals
-
-
-1. Reset button
-2. JTAG connector for programming
-3. 5V power supply
-4. 8051 microcontroller
-5. NJM2113 audio amplifier
-6. 8 DIP switches
-7. Potentiometer
-8. Fire button
-9. 64x128 pixel LCD
-10. Start button
 
 
 Design Alternatives
@@ -246,13 +208,13 @@ C8051F020_defs.h
 ^^^^^^^^^^^^^^^^
 .. _c8051f020_defs_h:
 
-This file contains the definitions for the 8051 microcontroller. It is included in all of the source files.
+This file contains the definitions for the 8051 microcontroller. It is included in all of the source files. It contains various definitions for the special function registers and timers.
 
 debug.h
 ^^^^^^^
 .. _debug_h:
 
-This file contains the function prototypes for the debug functions used in the code. The debug functions are used to print debug messages to the 64x128 pixel LCD display. It also contains a vertical line printer for debug purposes.
+This file contains the function prototypes for the debug functions used in the code. The debug functions are used to print debug messages to the 64x128 pixel LCD display. It also contains a vertical line printer for debug purposes. This file just contains the function prototypes. The actual functions are defined in debug.c.
 
 init.h
 ^^^^^^
@@ -300,37 +262,58 @@ debug.c
 ^^^^^^^
 .. _debug_c:
 
-This file contains the function definitions for the debug functions used in the code. The debug functions are used to print debug messages to the 64x128 pixel LCD display. It also contains a vertical line printer for debug purposes.
+This file contains the function definitions for the debug functions used in the code. The debug functions are used to print debug messages to the 64x128 pixel LCD display. It also contains a vertical line printer for debug purposes. This file contains the actual function definitions for the debug functions. It is very useful for debugging the code in real-time. For example the debug print statements can be used to print the values of variables to the LCD display. This can be used to verify various peripheral are working correctly such as the potentiometer. An example of how the ``debug_draw_vertical_line()`` function can be used to debug the code is shown below.
+
+.. code-block:: c
+
+   void debug_draw_vertical_line(void)
+   {
+      unsigned char i;
+      if(pot_flag ==1)
+      {
+         pot_flag = 0; //reset flag
+         debug_line_pos = ((avg * 128L) >> 12); //convert avg to be between 00-128
+         debug_pot_position(debug_line_pos); //debug for pot	
+         for(i=0; i<8; ++i)
+         {
+               screen[128 * i + debug_line_pos] = 0xFF; //draw vertical line
+         }
+         
+      }
+
+   }
+
+This function is helpful for lining up the invaders and verifying their ``col``. It was also used to help line up the ``Start`` and ``Game Over`` splash screen.
 
 init.c
 ^^^^^^
 .. _init_c:
 
-This file contains the function definitions for the initialization functions used in the code. The initialization functions are used to initialize the 8051 microcontroller, the timers, special function registers, and the 64x128 pixel LCD display.
+This file contains the function definitions for the initialization functions used in the code. This code has one function inside which is called ``init()``. This function is called once at the beginning of the program. It is used to initialize the 8051 microcontroller, the timers, special function registers, and the 64x128 pixel LCD display.
 
 interrupts.c
 ^^^^^^^^^^^^
 .. _interrupts_c:
 
-This file contains the function definitions for the interrupt service routines used in the code. The interrupt service routines are used to handle the interrupts generated by the timers and the 64x128 pixel LCD display.
+This file contains the function definitions for the interrupt service routines used in the code. The interrupt service routines are used to handle the interrupts generated by the timers and the 64x128 pixel LCD display. When an interrupt is called from any of the timers or the LCD display, the corresponding interrupt service routine is called. The interrupt service routines are used to update the game state and display the graphics on the 64x128 pixel LCD display. The interrupt service routines are also used to generate the sound effects for the game.
 
 invaders.c
 ^^^^^^^^^^
 .. _invaders_c:
 
-This file contains the function definitions for the game logic functions used in the code. The game logic functions are used to implement the rules of the game, track the player's score, and update the game state.
+This file contains the function definitions for the game logic functions used in the code. The game logic functions are used to implement the rules of the game, track the player's score, and update the game state. This is where the ``main`` game code is stored. There are also various function for the game logic such as ``score()`` and ``lives_left()``. The ``score()`` function is used to update the player's score. The ``lives_left()`` function is used to update the player's lives. The ``invaders.c`` file also contains the ``main()`` function which is the entry point for the program. The ``main()`` function is used to initialize the game and start the game loop.
 
 lcd.asm
 ^^^^^^^
 .. _lcd_asm:
 
-This file contains the function definitions for the LCD functions used in the code. The LCD functions are used to display the graphics and text on the 64x128 pixel LCD display.
+This file contains the function definitions for the LCD functions used in the code. The LCD functions are used to display the graphics and text on the 64x128 pixel LCD display. All of this code was copied from previous labs. The code is well commented by Dr. Brown and easy to follow. The code is written in assembly language and is very efficient.
 
 utils.c
 ^^^^^^^
 .. _utils_c:
 
-This file contains the function definitions for the utility functions used in the code. The utility functions are used to perform various tasks such as converting integers to strings, generating random numbers, and calculating the square root of a number.
+This file contains the function definitions for the utility functions used in the code. Such functions as ``collision_tank_detect()``, ``collision_detect()``, ``add_invader_laser()``, ``update_invader_lasers()``, and ``invader_laser()``.
 
 Collision Detection 
 -------------------
@@ -340,16 +323,6 @@ The code is a function that detects collisions between a laser and an invader sp
 
 .. code-block:: c
 
-   /*
-   * Function: Detect collision 
-   * between a laser and a sprite
-   * ---------------------------- 
-   * Globals:
-   *   unsigned int: left boundry of army block
-   *   unsigned int: right boundry of army block
-   *   unsigned char array: army block    
-   *   laser lasers: array of lasers
-   */
    void collision_detect(){
       int SPRITE_RATIO = 5042;
       int ii;
@@ -376,21 +349,6 @@ The code is a function that detects collisions between a laser and an invader sp
                         
                            }
                   }
-
-                  if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2)) && lasers[ii].active == 1){
-                           //if(lasers[ii].page == lowest_active_sprite){ // The laser is at the same page as an active sprite. Next check for col.
-                              unsigned long col_temp = lasers[ii].col;
-                              diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
-                              diff = diff * SPRITE_RATIO;
-                              diff = MAX_INVADERS/2 - (diff >> 16) - 1;
-                              if(invader_array[diff] == 1){
-                                 invader_array[diff] = 0;
-                                 lasers[ii].active = 0;
-                           player_score++;
-                                 
-                              }
-                           
-                  }
                }
          }
       }
@@ -406,16 +364,6 @@ Invader Laser Generation
 The code is a function that adds a new invader laser to an array of laser objects. It takes two parameters: the page and column coordinates of the new laser. The function loops through the array of laser objects and finds the first inactive laser object. It then sets the properties of this object to the new coordinates and marks it as active. The function uses several global variables, including the left and right boundaries of the army block and an array of invader laser objects.
 
 .. code-block:: c
-
-   /*
-   * Function: Shoot invader laser
-   * ---------------------------- 
-   * Globals:
-   *   unsigned int: left boundry of army block
-   *   unsigned int: right boundry of army block
-   *   unsigned char array: army block    
-   *   laser lasers: array of lasers
-   */
 
    void add_invader_laser(int page, int col)
    {
@@ -528,6 +476,27 @@ Timers and Interrupts
 
 The 8051 microcontroller has two 16-bit timers that can be used to generate delays, measure frequency, or create PWM signals. The microcontroller also has a watchdog timer to detect and recover from system faults. These timers are important features that provide precise timing and control in many applications.
 
+Initialization
+^^^^^^^^^^^^^^
+.. _initialization:
+
+The following code is used to initialize the timers and also set the priority of each timer. The code is found in the ``init.c`` file. 
+
+.. code-block:: c
+
+   //--------------------- Registers ------------------------
+   REF0CN = 0x03; // enable ADC
+   ADC0CN = 0x8C; // ADC0 Control Register
+   ADC0CF = 0x40; // ADC0 Configuration Register gain 1
+   AMX0SL = 0x06; // AMUX0 Channel Select Register
+   IE = 0x82;   // interupt enable
+   EIE2 = 0x06; // Enable timer4 and ADC
+   EIP2 = 0x04; // Highest Priority for timer4
+
+
+Timer 4 is set to the highest priority because it controls the DAC. Since the DAC is used for sound, it is important that the DAC is updated as quickly as possible.
+
+
 Timer 0
 ^^^^^^^
 .. _timer_0:
@@ -563,19 +532,6 @@ Timer 0 is used to trigger an interrupt every 70 milliseconds. Every time the ti
          timer0_flag = 1;
       }
    }
-
-Testing the timer0 interrupt. By toggling the P1.0 pin we can see the interrupt is working. The P1.0 pin is connected to an LED. The LED will toggle every time the interrupt is triggered. The LED was disconnected from the pin and a scope probe was connected. The following image shows the exact time the interrupt is triggered.
-
-.. image:: images/scope_0.png
-   :width: 650
-   :height: 350
-   :alt: Timer0 Interrupt Scope
-   :align: center
-
-Figure 7. Space Invaders Timer0 Interrupt Scope
-
-From the image above we can see that the interrupt is triggered every 70 milliseconds. The interrupt is triggered at 14.3 kHz.
-
 
 Timer 2 ADC
 ^^^^^^^^^^^
@@ -683,26 +639,32 @@ This circuit takes advange of the NJM2113 IC for the audio amplifier. It also ta
       envelope = 512;
    }
 
-The following code is an example of how the sound is generated for the game.
+The ``code unsigned char sine[]`` is used to form the sine wave digitally. The ``phase`` variable is used to keep track of where the sine wave is at. The ``play_note`` function is used to play a note. The ``note`` variable is the frequency of the note. The ``dur`` variable is the duration of the note. Below is an example of how the ``play_note`` function is used.
 
 .. code-block:: c
 
-   if(fire == 0 && counter == 25563){
-      play_note(E5, 100);	
+   if(invader_death_flag == 1){
+      invader_death_flag = 0; //reset flag
+      play_note(C5,50); //play death note
    }
+   if(invaders_laser_flag == 1){
+      invaders_laser_flag = 0; //reset flag
+      play_note(D5, 50);//play laser note
+   }
+   if(death_note_flag == 1){
+				death_note_flag = 0; //reset flag
+				play_note(G4,25); //play life lost flag
+	}
 
-Sound will play everytime the player shoots a laser, when an enemy fires a laser, and when the player dies.
+Sound will play everytime the player shoots a laser, when an enemy fires a laser, and when the player dies. Each time an event occurs a flag is set. The flag is then used to play the note.
 
 
 Power Supply
 ------------
 .. _power_supply:
 
-.. note::
 
-   Add information here
-
-Here is an image of the power supply schematic. Details need to be added.
+The following schematic uses a 7509 voltage regulator to regulate the voltage to 9VDC. The 9VDC is then used to power the 8051 microcontroller and the rest of the circuit. The power supply also has an LED to indicate that the power supply is on.
 
     .. image:: images/power-supply-9VDC.png
         :width: 500
@@ -727,26 +689,23 @@ Crystal Oscillator
 
 Figure 10. Space Invaders Crystal Oscillator
 
-The crystal oscillator is used to generate the clock signal for the 8051 microcontroller. The crystal oscillator is a 22.1184MHz crystal.
+The crystal oscillator is used to generate the clock signal for the 8051 microcontroller. The crystal oscillator is a 22.1184MHz crystal. The crystal oscillator is connected to the 8051 microcontroller using two 22pF capacitors. The crystal oscillator is connected to the 8051 microcontroller using the following code found in the ``init.c`` file.
 
+.. code-block:: c
 
-Hardware Schematic 
-------------------
-.. _hardware_schematic:
+   WDTCN = 0xde;   // disable watchdog
+   WDTCN = 0xad;
+   XBR2 = 0x40;    // enable port output
 
-.. note::
+   OSCXCN = 0x67;            // turn on external crystal
+   TMOD = 0x21;            // wait 1ms using T1 mode 2
+   TH1 = -167;                // 2MHz clock, 167 counts - 1ms
+   TR1 = 1;
+   while(TF1 == 0){ }          // wait 1ms
+   while(!(OSCXCN & 0x80)){ }  // wait till oscillator stable
+   OSCICN = 8;                    // switch over to 22.1184MHz
 
-   Update the hardware schematic here.
-
-Here is an image of the hardware schematic. Details need to be added.
-
-    .. image:: images/project02-space-invaders-schematic-rev1-2.png
-        :width: 600
-        :height: 450
-        :alt: 8051 Schematic
-        :align: center
-
-Figure 11. Space Invaders Schematic
+When the 8051 microcontroller is powered on the crystal oscillator is turned on. The crystal oscillator takes a few milliseconds to stabilize. Then the 8051 microcontroller switches over to the 22.1184MHz clock signal.
 
 
 Testing
@@ -758,6 +717,23 @@ the design meets the requirements, and second, to document the results of those
 tests for your implementation. State for each test: (a) the test procedure, (b) the
 observations to verify, (c) your observations, and (d) which requirements are
 applicable. Be sure each requirement is covered by at least one test. 
+
+Timer0 Timing Analysis
+----------------------
+
+a. **Test Procedure:** Testing the timer0 interrupt. By toggling the P1.0 pin we can see the interrupt is working. The P1.0 pin is connected to an LED. The LED will toggle every time the interrupt is triggered. The LED was disconnected from the pin and a scope probe was connected. 
+
+b. **Observations:** The interrupt is triggered every 70 milliseconds. The interrupt is triggered at 14.3 kHz. The following image shows the exact time the interrupt is triggered.
+
+.. image:: images/scope_0.png
+   :width: 650
+   :height: 350
+   :alt: Timer0 Interrupt Scope
+   :align: center
+
+Figure 7. Space Invaders Timer0 Interrupt Scope
+
+c. **Requirements:** The system shall have a timer0 interrupt that is triggered every 70 milliseconds.
 
 
 Rest, Start, and Fire Buttons
@@ -861,7 +837,6 @@ a. **Test Procedure:** Press the start button and check to see if the invaders m
 b. **Observations:** When the start button was pressed the invaders moved to the right, firing lasers at random. When the invaders reached the side of the display, they moved 8 pixels closer to the laser cannon and reversed direction.
 
 c. **Requirements:** Once the battle begins, the formation of invaders shall move to the right, firing lasers at random. When the invaders reach the side of the display, they shall move 8 pixels closer to the laser cannon and reverse direction.
-
 
 
 Conclusion

@@ -123,9 +123,6 @@ Theory of Operation
 --------------------
 .. _theory_of_operation:
 
-.. note::
-
-   Add information about the theory of operation here.
 
 1. **Input Interface:** The input interface block includes the potentiometer, start, fire, and reset buttons. The potentiometer is used to change the location of the laser     cannon on the screen, while the start, fire, and reset buttons are used to initiate the game, fire the laser, and reset the game, respectively. The input signals are read by the microcontroller and processed to update the game state.
 
@@ -479,6 +476,27 @@ Timers and Interrupts
 
 The 8051 microcontroller has two 16-bit timers that can be used to generate delays, measure frequency, or create PWM signals. The microcontroller also has a watchdog timer to detect and recover from system faults. These timers are important features that provide precise timing and control in many applications.
 
+Initialization
+^^^^^^^^^^^^^^
+.. _initialization:
+
+The following code is used to initialize the timers and also set the priority of each timer. The code is found in the ``init.c`` file. 
+
+.. code-block:: c
+
+   //--------------------- Registers ------------------------
+   REF0CN = 0x03; // enable ADC
+   ADC0CN = 0x8C; // ADC0 Control Register
+   ADC0CF = 0x40; // ADC0 Configuration Register gain 1
+   AMX0SL = 0x06; // AMUX0 Channel Select Register
+   IE = 0x82;   // interupt enable
+   EIE2 = 0x06; // Enable timer4 and ADC
+   EIP2 = 0x04; // Highest Priority for timer4
+
+
+Timer 4 is set to the highest priority because it controls the DAC. Since the DAC is used for sound, it is important that the DAC is updated as quickly as possible.
+
+
 Timer 0
 ^^^^^^^
 .. _timer_0:
@@ -636,11 +654,8 @@ Power Supply
 ------------
 .. _power_supply:
 
-.. note::
 
-   Add information here
-
-Here is an image of the power supply schematic. Details need to be added.
+The following schematic uses a 7509 voltage regulator to regulate the voltage to 9VDC. The 9VDC is then used to power the 8051 microcontroller and the rest of the circuit. The power supply also has an LED to indicate that the power supply is on.
 
     .. image:: images/power-supply-9VDC.png
         :width: 500
@@ -665,7 +680,23 @@ Crystal Oscillator
 
 Figure 10. Space Invaders Crystal Oscillator
 
-The crystal oscillator is used to generate the clock signal for the 8051 microcontroller. The crystal oscillator is a 22.1184MHz crystal.
+The crystal oscillator is used to generate the clock signal for the 8051 microcontroller. The crystal oscillator is a 22.1184MHz crystal. The crystal oscillator is connected to the 8051 microcontroller using two 22pF capacitors. The crystal oscillator is connected to the 8051 microcontroller using the following code found in the ``init.c`` file.
+
+.. code-block:: c
+
+   WDTCN = 0xde;   // disable watchdog
+   WDTCN = 0xad;
+   XBR2 = 0x40;    // enable port output
+
+   OSCXCN = 0x67;            // turn on external crystal
+   TMOD = 0x21;            // wait 1ms using T1 mode 2
+   TH1 = -167;                // 2MHz clock, 167 counts - 1ms
+   TR1 = 1;
+   while(TF1 == 0){ }          // wait 1ms
+   while(!(OSCXCN & 0x80)){ }  // wait till oscillator stable
+   OSCICN = 8;                    // switch over to 22.1184MHz
+
+When the 8051 microcontroller is powered on the crystal oscillator is turned on. The crystal oscillator takes a few milliseconds to stabilize. Then the 8051 microcontroller switches over to the 22.1184MHz clock signal.
 
 
 Testing

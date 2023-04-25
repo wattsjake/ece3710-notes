@@ -668,25 +668,6 @@ Figure 10. Space Invaders Crystal Oscillator
 The crystal oscillator is used to generate the clock signal for the 8051 microcontroller. The crystal oscillator is a 22.1184MHz crystal.
 
 
-Hardware Schematic 
-------------------
-.. _hardware_schematic:
-
-.. note::
-
-   Update the hardware schematic here.
-
-Here is an image of the hardware schematic. Details need to be added.
-
-    .. image:: images/project02-space-invaders-schematic-rev1-2.png
-        :width: 600
-        :height: 450
-        :alt: 8051 Schematic
-        :align: center
-
-Figure 11. Space Invaders Schematic
-
-
 Testing
 =======
 .. _testing:

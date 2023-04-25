@@ -639,15 +639,24 @@ This circuit takes advange of the NJM2113 IC for the audio amplifier. It also ta
       envelope = 512;
    }
 
-The following code is an example of how the sound is generated for the game.
+The ``code unsigned char sine[]`` is used to form the sine wave digitally. The ``phase`` variable is used to keep track of where the sine wave is at. The ``play_note`` function is used to play a note. The ``note`` variable is the frequency of the note. The ``dur`` variable is the duration of the note. Below is an example of how the ``play_note`` function is used.
 
 .. code-block:: c
 
-   if(fire == 0 && counter == 25563){
-      play_note(E5, 100);	
+   if(invader_death_flag == 1){
+      invader_death_flag = 0; //reset flag
+      play_note(C5,50); //play death note
    }
+   if(invaders_laser_flag == 1){
+      invaders_laser_flag = 0; //reset flag
+      play_note(D5, 50);//play laser note
+   }
+   if(death_note_flag == 1){
+				death_note_flag = 0; //reset flag
+				play_note(G4,25); //play life lost flag
+	}
 
-Sound will play everytime the player shoots a laser, when an enemy fires a laser, and when the player dies.
+Sound will play everytime the player shoots a laser, when an enemy fires a laser, and when the player dies. Each time an event occurs a flag is set. The flag is then used to play the note.
 
 
 Power Supply
@@ -828,7 +837,6 @@ a. **Test Procedure:** Press the start button and check to see if the invaders m
 b. **Observations:** When the start button was pressed the invaders moved to the right, firing lasers at random. When the invaders reached the side of the display, they moved 8 pixels closer to the laser cannon and reversed direction.
 
 c. **Requirements:** Once the battle begins, the formation of invaders shall move to the right, firing lasers at random. When the invaders reach the side of the display, they shall move 8 pixels closer to the laser cannon and reverse direction.
-
 
 
 Conclusion

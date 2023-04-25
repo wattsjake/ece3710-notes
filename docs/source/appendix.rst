@@ -682,66 +682,75 @@ debug.c
 
 .. code-block:: c 
 
-   #include <C8051F020.h>
-   #include <init.h>
-   #include <lcd.h>
-   #include <interrupts.h>
+ #include <C8051F020.h>
+#include <init.h>
+#include <lcd.h>
+#include <interrupts.h>
 
-   unsigned char debug_line_pos;
+unsigned char debug_line_pos;
 
-   void debug_write_char(unsigned char page, unsigned char col, char ch)
-   {
-      int i = page * 128 + col;
-      int j = (ch - ' ') * 5;
-      unsigned char k;
-      
-      for(k=0; k<5;++k)
-      {
-         screen[i + k] = font5x8[j + k];    // OR operator paints in character rather than deleting pixels and refilling. Allows for smoother transistions?
-      }
-   }
+/** ----------- Debug Write Char ------------
+ *  This funciton is used to write a character to the screen.
+ */
+void debug_write_char(unsigned char page, unsigned char col, char ch)
+{
+    int i = page * 128 + col;
+    int j = (ch - ' ') * 5;
+    unsigned char k;
+    
+    for(k=0; k<5;++k)
+    {
+        screen[i + k] = font5x8[j + k];    // OR operator paints in character rather than deleting pixels and refilling. Allows for smoother transistions?
+    }
+}
 
-   /* 	---------- Debug Pot Position ----------
-      This function is used to debug the potentiometer. It will
-      take the value of the pot and display it on the LCD. 
-   */
-   void debug_pot_position(unsigned char x)
-   {
-      debug_write_char(0,0, (x/100)%10 + 0x30);
-      debug_write_char(0, 6, (x/10)%10 + 0x30);
-      debug_write_char(0, 12, x%10 + 0x30);
-   }
-   /*  ---------- Debug Army Position ----------
-      This function is used to debug the army position. It will
-      take the value of the army and display it on the LCD.
-   */
-   void debug_army_position(signed char x)
-   {
-      //if x is negative, display a negative sign
-      if(x < 0)
-      {
-         debug_write_char(0,20, '-');
-         x = -x; //convert negative x to positive for correct display
-      }
-      debug_write_char(0,26, (x/100)%10 + 0x30);
-      debug_write_char(0,32, (x/10)%10 + 0x30);
-      debug_write_char(0,38, x%10 + 0x30);
-   }
-   void debug_draw_vertical_line(void)
-   {
-      unsigned char i;
-      if(pot_flag ==1)
-      {
-         pot_flag = 0; //reset flag
-         debug_line_pos = ((avg * 128L) >> 12); //convert avg to be between 00-128
-         debug_pot_position(debug_line_pos); //debug for pot	
-         for(i=0; i<8; ++i)
-         {
-               screen[128 * i + debug_line_pos] = 0xFF; //draw vertical line
-         }
-         
-      }
-   }
+/* 	---------- Debug Pot Position ----------
+*	This function is used to debug the potentiometer. It will
+*	take the value of the pot and display it on the LCD. 
+*/
+void debug_pot_position(unsigned char x)
+{
+	debug_write_char(0,0, (x/100)%10 + 0x30);
+	debug_write_char(0, 6, (x/10)%10 + 0x30);
+	debug_write_char(0, 12, x%10 + 0x30);
+}
+
+/*  ---------- Debug Army Position ----------
+*    This function is used to debug the army position. It will
+*    take the value of the army and display it on the LCD.
+*/
+void debug_army_position(signed char x)
+{
+    //if x is negative, display a negative sign
+    if(x < 0)
+    {
+        debug_write_char(0,20, '-');
+		x = -x; //convert negative x to positive for correct display
+    }
+    debug_write_char(0,26, (x/100)%10 + 0x30);
+    debug_write_char(0,32, (x/10)%10 + 0x30);
+    debug_write_char(0,38, x%10 + 0x30);
+}
+
+/* ---------- Debug Draw Vertical Line ----------
+ * Used for determining the actual column position of the screen
+ */
+void debug_draw_vertical_line(void)
+{
+	unsigned char i;
+	if(pot_flag ==1)
+	{
+		pot_flag = 0; //reset flag
+        debug_line_pos = ((avg * 128L) >> 12); //convert avg to be between 00-128
+        debug_pot_position(debug_line_pos); //debug for pot	
+        for(i=0; i<8; ++i)
+        {
+            screen[128 * i + debug_line_pos] = 0xFF; //draw vertical line
+        }
+        
+	}
+
+}
 
 init.c
 ^^^^^^
@@ -913,357 +922,419 @@ invaders.c
 
 .. code-block:: c 
 
-   #include <C8051F020.h>
-   #include <lcd.h>
-   #include <notes.h>
-   #include <init.h>
-   #include <interrupts.h>
-   #include <debug.h>
-   #include "invaders.h"
-   #include "utils.h"
+   
+#include <C8051F020.h>
+#include <lcd.h>
+#include <notes.h>
+#include <init.h>
+#include <interrupts.h>
+#include <debug.h>
+#include "invaders.h"
+#include "utils.h"
 
-   //-------------------------- TODO ----------------------------
-   // - Fix sound effects
-   // - Validate timer0 to be 10ms
-   // - Fix debug vertical line since it doesn't erase itself
-   // - Add logic to determine if the edge monsters have been killed and update the right_limit_idx and left_limit_idx appropriately 
-   // - IMPORTANT: logic not fully tested yet.
+//-------------------- BEGIN VARIABLES -----------------------
 
+//------------------- Global Game Variables ------------------
+int invaders_alive = 16;
 
+int army_page_offset = 0;
+int army_col_offset = 13;
 
-   //-------------------- BEGIN VARIABLES -----------------------
+int player_score = 0;
 
-   //------------------ Sprite Texture Table --------------------
-   char sprite_texture_down[10] = {0x70, 0x18, 0x7D, 0xB6, 0x3C, 0x3C, 0xB6, 0x7D, 0x18, 0x70};
+int set_tank_pos;
 
-   //------------------- Button Variables -----------------------
-   sbit fire = P3^6;
-   sbit start = P3^7;
-   bit last_start = 0;
-   bit last_fire = 0;
+int player_lives = 3;
+//------------------- Button Variables -----------------------
+sbit fire = P3^6;
+sbit start = P3^7;
+bit last_start = 0;
+bit last_fire = 0;
 
-   //------------------- Laser Variables ------------------------
-   unsigned char laser_time = LASER_ANIMATION_TIME_DELAY; //used to determine speed of laser
-   unsigned int current_laser_pos = 0; 
+//------------------- Laser Variables ------------------------
+unsigned char laser_time = LASER_ANIMATION_TIME_DELAY; //used to determine speed of laser
+unsigned int current_laser_pos = 0; 
 
+xdata unsigned char invader_array[16] = {1,1,1,1,1,1,1,1,
+						                 1,1,1,1,1,1,1,1};
+xdata laser lasers[MAX_LASER];
+xdata invader_laser_list invader_lasers[MAX_LASER];
 
+// bounding edges of the army
+xdata unsigned long army_box_right = 100;
+xdata unsigned long army_box_left = 20;
 
-   xdata unsigned char invader_array[16] = {1,1,1,1,1,1,1,1,
-                                    1,1,1,1,1,1,1,1};
+//--------------------- Invader Array ------------------------
+int army_dir_toggle = 0;
+int army_width = MAX_INVADERS/2;
+int invader_left_dead;
+int invader_right_dead;
+int not_dead = 1;
 
+unsigned char invader_animation_time = INVADER_ANIMATION_TIME_DELAY; //used to determine speed of invader animatio
 
-   xdata laser lasers[MAX_LASER];
-   xdata invader_laser_list invader_lasers[MAX_LASER];
-
-   // Fart deluxe variables (aka the bounding edges of the army)
-   xdata unsigned long army_box_right = 100;
-   xdata unsigned long army_box_left = 20;
-
-
-
-   //------------------- Cannon Variables -----------------------
-
-
-   //--------------------- Invader Array ------------------------
-
-   bit sprite_figure = 0; //used to determine which sprite to draw refer to draw_army_animation() function
-   unsigned char invader_animation_time = INVADER_ANIMATION_TIME_DELAY; //used to determine speed of invader animation
-   unsigned char invader_array_page = 0; //used to determine which page the army is on
-   signed char invader_array_col = 0; //used to determine which column the army is on
-   unsigned char dir = 0; //used to determine which direction the army is moving
-
-   unsigned char right_limit_idx = 7; //used to determine if the army has reached the right edge
-   signed char left_limit_idx = 0; //used to determine if the army has reached the left edge
-
-   unsigned char invader_right_limit_array[8] = {102,89,76,63,50,37,24,11}; //limits for the right edge of the screen does depend on the 'INVADERS_COL_START' define
-   signed char invader_left_limit_array[8] = {-14,-27,-40,-53,-66,-79,-92,-105};
-
-   int invaders_alive = 16;
-   int army_page_offset = 0;
-   int army_col_offset = 13; 
-   int army_dir_toggle = 0;
-   int army_width = MAX_INVADERS/2;
-   int invader_left_dead;
-   int invader_right_dead;
-   int player_score = 0;
-   int set_tank_pos;
-   int player_lives = 3;
-   int not_dead = 1;
-
-   //------------------- Debounce Button ------------------------
-   unsigned char debounce_time = DEBOUNCE_BUTTON_TIME_DELAY;
+//------------------- Debounce Button ------------------------
+unsigned char debounce_time = DEBOUNCE_BUTTON_TIME_DELAY;
 
 
-   //-------------------- END VARIABLES -------------------------
+//-------------------- END VARIABLES -------------------------
 
-   //----------------------- Functions --------------------------
-   void write_char(unsigned char page, unsigned char col, char ch)
-   {
-      int i = page * 128 + col;
-      int j = (ch - ' ') * 5;
-      unsigned char k;
-      
-      for(k=0; k<5;++k)
-      {
-         screen[i + k] = font5x8[j + k];    // OR operator paints in character rather than deleting pixels and refilling. Allows for smoother transistions?
-      }
-   }
-   void write_string(unsigned char page, unsigned char col, char *temp)
-   {
-      while(*temp){
-         write_char(page, col, *temp);
-         temp++;
-         col+=6;
-      }
-   }
-   /**
-   * Writes a byte value to a specific location on the screen.
-   */
-   void write_byte(unsigned char page, unsigned char col, unsigned char val)
-   {
-      if(col < 0 || col > 127){
-         return;
-      }
-      screen[128 * page + col] = val;
-   }
-   /**
-   * Draws a sprite on the screen.
-   */
-   void draw_sprite(unsigned char page, unsigned char col, unsigned char figure)
-   {
-      static unsigned int code sprite_texture_tb[] = {
-         0x70, 0x18, 0x7D, 0xB6, 0x3C, 0x3C, 0xB6, 0x7D, 0x18, 0x70, //first sprite
-         0x0E, 0x98, 0x7D, 0x36, 0x3C, 0x3C, 0x36, 0x7D, 0x98, 0x0E};//second sprite
-      unsigned char frame = figure * 10; //if figure is 0 then frame = 0, if figure is 1 then frame = 10
+//----------------------- Functions --------------------------
 
-      unsigned char i = 0;
-      for(i=0; i<10; i++)
-      {
-         write_byte(page, col+i, sprite_texture_tb[frame+i]);
-      }
-   }
-   void add_laser(int col)
-   {
-      int ii;
-      for(ii = 0; ii < MAX_LASER; ii++){
-         if(lasers[ii].active == 0){
-            lasers[ii].active = 1;
-            lasers[ii].page = 7;
-            lasers[ii].col = col;
-         }
-      }
-   }
-   void update_lasers()
-   {
-      int ii;
-      for(ii = 0; ii < MAX_LASER; ii++){
-         if(lasers[ii].active == 1){
-            screen[(lasers[ii].page * 128) + lasers[ii].col] = 0x00;
-            lasers[ii].page--;
-            screen[(lasers[ii].page * 128) + lasers[ii].col] = 0xFF;
-            if(lasers[ii].page < 1){
-               lasers[ii].active = 0;
-            }
-         }
-      }
-   }
-   void draw_army(unsigned char page, unsigned char col, unsigned char figure)
-   {
-      unsigned char i;
-      unsigned char j;
-      for(i = 0; i < 2; i++){
-         for(j = 0; j < 8; j++){
-            if(invader_array[i*8+j] == 1)//invader_array is a 16 element array
-            {
-               draw_sprite(page+i, col+j*13, figure);
-            }
-            else
-            {
-               continue; //if invader value is 0 then skip it
-            }
-         }
-      }
-   }
-   void write_cannon(int x, unsigned char size)
-   {
-      int i = 0;
-      write_byte(7, x, 0xFF);
-      write_byte(7,x+1, 0xFE);
-      write_byte(7,x-1, 0xFE);
-      write_byte(7,x+2, 0xFC);
-      write_byte(7,x-2, 0xFC);
-      
-      for(i = 0; i < size; i++){
-         write_byte(7,x+3+i, 0xF8);
-         write_byte(7,x-3-i, 0xF8);
-      }
-      for(i = size; i < 20; i++){
-         write_byte(7,x+4+i, 0x00);
-         write_byte(7,x-4-i, 0x00);
-      }
-   }
-   void write_sprite(int page, int col)
-   {
-      int i; 
-      for(i = 0; i < 10; i++){
-         // if(sprite_toggle == 0){
-            screen[128 * page + col + i] = sprite_texture_down[i];
-         // }else{
-         // 	screen[128 * page + col + i] = sprite_texture_down[i];
-         // }
-      }
-      // sprite_toggle = !sprite_toggle;	
-   }
+/*
+* Funciton: Write a character to the screen
+* ----------------------------
+* Given a passed in character, write it to the screen
+* at the specified page and column
+* Arguments:
+*   unsigned char: page
+*   unsigned char: col
+*   char ch: character to write
+*/
+void write_char(unsigned char page, unsigned char col, char ch)
+{
+    int i = page * 128 + col;
+    int j = (ch - ' ') * 5;
+    unsigned char k;
+    
+    for(k=0; k<5;++k)
+    {
+        screen[i + k] = font5x8[j + k];    // OR operator paints in character rather than deleting pixels and refilling. Allows for smoother transistions?
+    }
+}
+
+/*
+* Funciton: Write a string to the screen
+* ----------------------------
+* Given a passed in string, write it to the screen
+* at the specified page and column
+* Arguments:
+*   unsigned char: page
+*   unsigned char: col
+*   *char array: String to write
+*/
+void write_string(unsigned char page, unsigned char col, char *temp)
+{
+    while(*temp){
+        write_char(page, col, *temp);
+		temp++;
+		col+=6;
+    }
+}
+
+/*
+* Funciton: Write a specific byte to the screen
+* ----------------------------
+* Given a passed byte, write it to the screen
+* at the specified page and column
+* Arguments:
+*   unsigned char: page
+*   unsigned char: col
+*   unsigned char: val
+*/
+void write_byte(unsigned char page, unsigned char col, unsigned char val)
+{
+	if(col < 0 || col > 127){
+		return;
+	}
+	screen[128 * page + col] = val;
+}
+
+/*
+* Funciton: Draw Sprite
+* ----------------------------
+* Given the desired sprite texture, (1 for up, 0 for down), 
+* write it to the screen.
+* at the specified page and column
+* Arguments:
+*   unsigned char: page
+*   unsigned char: col
+*   unsigned char: figure (desired sprite texture)
+*/
+void draw_sprite(unsigned char page, unsigned char col, unsigned char figure)
+{
+	static unsigned int code sprite_texture_tb[] = {
+		0x70, 0x18, 0x7D, 0xB6, 0x3C, 0x3C, 0xB6, 0x7D, 0x18, 0x70, //first sprite
+		0x0E, 0x98, 0x7D, 0x36, 0x3C, 0x3C, 0x36, 0x7D, 0x98, 0x0E};//second sprite
+	unsigned char frame = figure * 10; //if figure is 0 then frame = 0, if figure is 1 then frame = 10
+
+	unsigned char i = 0;
+	for(i=0; i<10; i++)
+	{
+		write_byte(page, col+i, sprite_texture_tb[frame+i]);
+	}
+}
+
+/*
+* Funciton: Add Cannon Laser
+* ----------------------------
+* When the player shoots a laser, add it to
+* the laser tracking array where the cannon is at
+* when the laser is shot.
+* Arguments:
+*   unsigned char: col
+* Global Variables:
+* 	laser lasers: array of lasers structs
+*/
+void add_laser(int col)
+{
+	int ii;
+	for(ii = 0; ii < MAX_LASER; ii++){
+		if(lasers[ii].active == 0){
+			lasers[ii].active = 1;
+			lasers[ii].page = 7;
+			lasers[ii].col = col;
+		}
+	}
+}
+
+/*
+* Funciton: Update Cannon Lasers
+* ----------------------------
+* Iterates over the cannon laser array and updates
+* the laser position on the screen by decrementing
+* the laser page by 1.
+* Global Variables:
+* 	laser lasers: array of lasers structs
+*/
+void update_lasers()
+{
+	int ii;
+	for(ii = 0; ii < MAX_LASER; ii++){
+		if(lasers[ii].active == 1){
+			screen[(lasers[ii].page * 128) + lasers[ii].col] = 0x00;
+			lasers[ii].page--;
+			screen[(lasers[ii].page * 128) + lasers[ii].col] = 0xFF;
+			if(lasers[ii].page < 1){
+				lasers[ii].active = 0;
+			}
+		}
+	}
+}
+
+/*
+* Funciton: Draw Invader Army
+* ----------------------------
+* Given the offset for page and column, draw the invader army
+* using the invader array to determine which invaders are alive.
+* Arguments:
+*   unsigned char: page
+*   unsigned char: col
+*   unsigned char: figure (desired sprite texture)
+* Global Variables:
+* 	inavder array: array of invaders
+*/
+void draw_army(unsigned char page, unsigned char col, unsigned char figure)
+{
+	unsigned char i;
+	unsigned char j;
+	for(i = 0; i < 2; i++){
+		for(j = 0; j < 8; j++){
+			if(invader_array[i*8+j] == 1)//invader_array is a 16 element array
+			{
+				draw_sprite(page+i, col+j*13, figure);
+			}
+			else
+			{
+				continue; //if invader value is 0 then skip it
+			}
+		}
+	}
+}
+
+/*
+* Funciton: Draw Cannon
+* ----------------------------
+* Draw the cannon at the position mapped to 
+* the potentiameter position
+* Arguments:
+*   unsigned char: x - Potentiometer position
+*   unsigned char: size - Width of cannon
+* Global Variables:
+* 	inavder array: array of invaders
+* Functions Called:
+* 	write_byte
+*/
+void write_cannon(int x, unsigned char size)
+{
+	int i = 0;
+	write_byte(7, x, 0xFF);
+	write_byte(7,x+1, 0xFE);
+	write_byte(7,x-1, 0xFE);
+	write_byte(7,x+2, 0xFC);
+	write_byte(7,x-2, 0xFC);
+	
+	for(i = 0; i < size; i++){
+		write_byte(7,x+3+i, 0xF8);
+		write_byte(7,x-3-i, 0xF8);
+	}
+	for(i = size; i < 20; i++){
+		write_byte(7,x+4+i, 0x00);
+		write_byte(7,x-4-i, 0x00);
+	}
+}
+
+/*
+* Funciton: Play Note
+* ----------------------------
+* Play a note for a given duration
+* Arguments:
+*   int note:  note to play
+*   int dur:  duration of note
+*/
+void play_note(int note, int dur)
+{
+	RCAP4H = -note >> 8;
+	RCAP4L = -note;
+	duration = (dur*1382L)/note;
+	envelope = 512;
+}
+
+//---------------------- END FUNCTIONS -----------------------
+
+//----------------------- BEGIN MAIN -------------------------
+void main()
+{
+	// Initilization for variables used in the main loop
+	unsigned char ii;
+	int margin;
+	int padding_left;
+	int padding_right;
+	invader_left_dead = 0;
+	invader_right_dead = 0;
+	lasers[0].active = 0;
+	lasers[1].active = 0;
+	lasers[2].active = 0;
+	invader_lasers[0].active = 0;
+	invader_lasers[1].active = 0;
+	invader_lasers[2].active = 0;
+	
+	//--------------------Initialize Code---------------------
+	//use init.c to configure the initilization 
+	//refer to init.c & init.h for more information
+	init();
+
+	// Set all 
+	for(ii = 0; ii < MAX_LASER; ii++){
+		lasers[ii].page = 0;
+		lasers[ii].col = 0;
+		lasers[ii].active = 0;
+	}
+
+	//--------------------- START SCREEN ---------------------
+	while(start == 1)
+	{
+		write_string(1,46,"READY?");
+		write_string(6,22,"PRESS START TO");
+		write_string(7,49,"BEGIN");
+		draw_army(3,13,0);
+		refresh_screen();
+		//debug_draw_vertical_line(); //draws vertical line TODO: fix so only single line
+	}
+	blank_screen(); //clear screen after start
+
+	//--------------------- MAIN LOOP ---------------------
+    while(not_dead)
+    {		
+		/**`
+		 * The follow if loops are for checking interrupts on timers
+		 * Flags:
+		 * 		pot_flag: 1 if potentiometer has changed
+		 * 		timer0_flag: 1 if timer0 has reached 0
+		 * 		laser_time: 1 if laser_time has reached 0
+		 * 		invader_animation_time: 1 if invader_animation_time has reached 0
+		 * 
+		 */
+		if(pot_flag == 1) //If pot_flag == 1 update the position of the cannon
+		{
+			pot_flag = 0; //reset flag
+			set_tank_pos = ((avg * 128L) >> 12); //convert avg to be between 00-128
+			write_cannon(set_tank_pos, 3); //write cannon
+			// debug_pot_position(set_tank_pos); //debug for pot
+			refresh_screen();
+		}
+		if(timer0_flag == 1)
+		{
+			timer0_flag = 0;//reset flag from interrupts.c file
+			laser_time--;
+			invader_animation_time--;
+			debounce_time--;
+		}
+		if(laser_time == 0)
+		{
+			laser_time = LASER_ANIMATION_TIME_DELAY; //reset laser_time
+			update_lasers();
+			collision_detect();
+		}
+		if(invader_animation_time == 0)
+		{
+			invader_animation_time = INVADER_ANIMATION_TIME_DELAY; //reset animation time
+			blank_screen();
+			update_lasers();
+			draw_army(army_page_offset, army_col_offset, 0);
+			
+			army_width = invaders_alive / 2;
+		
 
 
-   /* 	---------- Play Notes ----------
-      This function is used to play notes for the game.
-   */
-   void play_note(int note, int dur)
-   {
-      RCAP4H = -note >> 8;
-      RCAP4L = -note;
-      duration = (dur*1382L)/note;
-      envelope = 512;
-   }
+			if(invader_array[invader_left_dead] == 0){
+				if(invader_array[invader_left_dead + 8] == 0){
+					invader_left_dead++;
+				}
+			}
+			if(invader_array[7 - invader_right_dead] == 0){
+				if(invader_array[7 - invader_right_dead + 8] == 0){
+					invader_right_dead++;
+				}
+			}			
 
-   //---------------------- END FUNCTIONS -----------------------
+			/**
+			 * The following code is for the movement of the army
+			 * and their direction
+			 */
+			margin = 1;
+			padding_right = (invader_right_dead * 13) + 13;
+			padding_left = (invader_left_dead * 13) + 13;
+			if(army_dir_toggle == 0){
+				army_col_offset++;
+				if(army_col_offset > padding_right + (13-margin)){
+					army_page_offset++;
+					army_dir_toggle = !army_dir_toggle;
+				}
+			}else{
+				army_col_offset--;
+				if(army_col_offset < margin - padding_left + 13){
+					army_page_offset++;
+					army_dir_toggle = !army_dir_toggle;
+				}
+			}
 
-   //----------------------- BEGIN MAIN -------------------------
-   void main()
-   {
-      unsigned char ii;
-      int margin;
-      int padding_left;
-      int padding_right;
-      invader_left_dead = 0;
-      invader_right_dead = 0;
-      lasers[0].active = 0;
-      lasers[1].active = 0;
-      lasers[2].active = 0;
-      invader_lasers[0].active = 0;
-      invader_lasers[1].active = 0;
-      invader_lasers[2].active = 0;
-      
-      //--------------------Initialize Code---------------------
-      //use init.c to configure the initilization 
-      //refer to init.c & init.h for more information
-      init();
-
-      
-      
-      for(ii = 0; ii < MAX_LASER; ii++){
-         lasers[ii].page = 0;
-         lasers[ii].col = 0;
-         lasers[ii].active = 0;
-      }
-
-      //--------------------- START SCREEN ---------------------
-      while(start == 1)
-      {
-         write_string(1,46,"READY?");
-         write_string(6,22,"PRESS START TO");
-         write_string(7,49,"BEGIN");
-         draw_army(3,13,0);
-         refresh_screen();
-         //debug_draw_vertical_line(); //draws vertical line TODO: fix so only single line
-      }
-      blank_screen(); //clear screen after start
-
-      //--------------------- MAIN LOOP ---------------------
-      while(not_dead)
-      {		
-         if(pot_flag == 1) //If pot_flag == 1 update the position of the cannon
-         {
-            pot_flag = 0; //reset flag
-            set_tank_pos = ((avg * 128L) >> 12); //convert avg to be between 00-128
-            write_cannon(set_tank_pos, 3); //write cannon
-            // debug_pot_position(set_tank_pos); //debug for pot
-            refresh_screen();
-         }
-         if(timer0_flag == 1)
-         {
-            timer0_flag = 0;//reset flag from interrupts.c file
-            laser_time--;
-            invader_animation_time--;
-            debounce_time--;
-         }
-         if(laser_time == 0)
-         {
-            laser_time = LASER_ANIMATION_TIME_DELAY; //reset laser_time
-            update_lasers();
-            collision_detect();
-         }
-         if(invader_animation_time == 0)
-         {
-            invader_animation_time = INVADER_ANIMATION_TIME_DELAY; //reset animation time
-            blank_screen();
-            update_lasers();
-            draw_army(army_page_offset, army_col_offset, 0);
-            
-            army_width = invaders_alive / 2;
-         
-
-
-            if(invader_array[invader_left_dead] == 0){
-               if(invader_array[invader_left_dead + 8] == 0){
-                  invader_left_dead++;
-               }
-            }
-            if(invader_array[7 - invader_right_dead] == 0){
-               if(invader_array[7 - invader_right_dead + 8] == 0){
-                  invader_right_dead++;
-               }
-            }			
-
-            margin = 1;
-            padding_right = (invader_right_dead * 13) + 13;
-            padding_left = (invader_left_dead * 13) + 13;
-            if(army_dir_toggle == 0){
-               army_col_offset++;
-               if(army_col_offset > padding_right + (13-margin)){
-                  army_page_offset++;
-                  army_dir_toggle = !army_dir_toggle;
-               }
-            }else{
-               army_col_offset--;
-               if(army_col_offset < margin - padding_left + 13){
-                  army_page_offset++;
-                  army_dir_toggle = !army_dir_toggle;
-               }
-            }
-            collision_detect();
-            debug_army_position((char)player_score);
-            debug_pot_position((char)player_lives);
-            
-            update_invader_lasers();
-            
-            refresh_screen();
-            P1^=1; //debug led light for animation
-         }
-         //if(debounce_time == 0)
-         //{
-            if(fire == 0){
-               add_laser(set_tank_pos);
-               //play_note(A4, 10);
-               invader_laser();
-            }
-            //debounce_time = DEBOUNCE_BUTTON_TIME_DELAY;
-
-         //}
-         if(player_lives <= 0){
-            not_dead = 0;
-         }
-      }
-      while(!not_dead){
-         blank_screen();
-         write_string(6,22,"DEAD");
-         refresh_screen();
-      }
-      //--------------------- END MAIN LOOP ---------------------
-   }
-   //------------------------ END MAIN -------------------------
-
+			collision_detect();
+			debug_army_position((char)player_score);
+			debug_pot_position((char)player_lives);
+			
+			update_invader_lasers();
+			 
+			refresh_screen();
+			P1^=1; //debug led light for animation
+		}
+		if(fire == 0){
+			add_laser(set_tank_pos);
+			//play_note(A4, 10);
+			invader_laser();
+		}
+		if(player_lives <= 0){
+			not_dead = 0;
+		}
+	}
+	while(!not_dead){
+		blank_screen();
+		write_string(6,22,"DEAD");
+		refresh_screen();
+	}
+	//--------------------- END MAIN LOOP ---------------------
+}
+//------------------------ END MAIN -------------------------
 
 lcd.asm
 ^^^^^^^
@@ -1505,129 +1576,157 @@ utils.c
 
 .. code-block:: c 
 
-   #include <C8051F020.h>
-   #include <init.h>
-   #include <lcd.h>
-   #include <interrupts.h>
-   #include "invaders.h"
+   
+#include <C8051F020.h>
+#include <init.h>
+#include <lcd.h>
+#include <interrupts.h>
+#include "invaders.h"
 
-   void collision_tank_detect(){
-      int ii;
-      int col_temp;
-      int page_temp;
 
-      for(ii = 0; ii < MAX_LASER; ii++){
-         col_temp = invader_lasers[ii].col;
-         page_temp = invader_lasers[ii].page;
+/*
+* Function: Detect a collision between a laser and the tank
+* ---------------------------- 
+* Globals:
+*   unsigned int: left boundry of army block
+*   unsigned int: right boundry of army block
+*   unsigned char array: army block    
+*   laser lasers: array of lasers
+*/
+void collision_tank_detect(){
+    int ii;
+    int col_temp;
+    int page_temp;
 
-         if(page_temp > 6){
-            if((col_temp < set_tank_pos + 5) && (col_temp > set_tank_pos - 5) && invader_lasers[ii].active == 1){
-               player_lives--;
-               invader_lasers[ii].active = 0;
-               break;
+    for(ii = 0; ii < MAX_LASER; ii++){
+        col_temp = invader_lasers[ii].col;
+        page_temp = invader_lasers[ii].page;
+
+		if(page_temp > 6){
+			if((col_temp < set_tank_pos + 5) && (col_temp > set_tank_pos - 5) && invader_lasers[ii].active == 1){
+				player_lives--;
+				invader_lasers[ii].active = 0;
+				break;
+			}
+		}
+    }
+}
+
+
+/*
+* Function: Detect collision 
+* between a laser and a sprite
+* ---------------------------- 
+* Globals:
+*   unsigned int: left boundry of army block
+*   unsigned int: right boundry of army block
+*   unsigned char array: army block    
+*   laser lasers: array of lasers
+*/
+void collision_detect(){
+    int SPRITE_RATIO = 5042;
+    int ii;
+    unsigned long diff;
+	unsigned long TEMP;
+	TEMP = 100;
+	collision_tank_detect();
+    for(ii = 0; ii < MAX_LASER; ii++){
+        if(lasers[ii].active){
+            if(lasers[ii].page <= 0){
+                lasers[ii].active = 0;
             }
-         }
-      }
-   }
-
-
-   /*
-   * Function: Detect collision 
-   * between a laser and a sprite
-   * ---------------------------- 
-   * Globals:
-   *   unsigned int: left boundry of army block
-   *   unsigned int: right boundry of army block
-   *   unsigned char array: army block    
-   *   laser lasers: array of lasers
-   */
-   void collision_detect(){
-      int SPRITE_RATIO = 5042;
-      int ii;
-      unsigned long diff;
-      unsigned long TEMP;
-      TEMP = 100;
-      collision_tank_detect();
-      for(ii = 0; ii < MAX_LASER; ii++){
-         if(lasers[ii].active){
-               if(lasers[ii].page <= 0){
-                  lasers[ii].active = 0;
-               }
-               else if(lasers[ii].page <= army_page_offset+1){
-                  if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2))){
-                     //if(lasers[ii].page == lowest_active_sprite){ // The laser is at the same page as an active sprite. Next check for col.
-                           unsigned long col_temp = lasers[ii].col;
-                     diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
-                           diff = diff * SPRITE_RATIO;
-                           diff = MAX_INVADERS - (diff >> 16) - 1;
-                           if(invader_array[diff] == 1){
-                              invader_array[diff] = 0;
-                              lasers[ii].active = 0;
+            else if(lasers[ii].page <= army_page_offset+1){
+                // The following if statement checks if the laser is in the same column as the army
+                if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2))){
+                    unsigned long col_temp = lasers[ii].col;
+                    diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
+                    diff = diff * SPRITE_RATIO;
+                    diff = MAX_INVADERS - (diff >> 16) - 1;
+                    if(invader_array[diff] == 1){
+                        invader_array[diff] = 0;
+                        lasers[ii].active = 0;
                         player_score++;
                         
-                           }
-                  }
-
-                  if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2)) && lasers[ii].active == 1){
-                           //if(lasers[ii].page == lowest_active_sprite){ // The laser is at the same page as an active sprite. Next check for col.
-                              unsigned long col_temp = lasers[ii].col;
-                              diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
-                              diff = diff * SPRITE_RATIO;
-                              diff = MAX_INVADERS/2 - (diff >> 16) - 1;
-                              if(invader_array[diff] == 1){
-                                 invader_array[diff] = 0;
-                                 lasers[ii].active = 0;
-                           player_score++;
-                                 
-                              }
-                           
-                  }
-               }
-         }
-      }
-   }
-
-   /*
-   * Function: Shoot invader laser
-   * ---------------------------- 
-   * Globals:
-   *   unsigned int: left boundry of army block
-   *   unsigned int: right boundry of army block
-   *   unsigned char array: army block    
-   *   laser lasers: array of lasers
-   */
-
-   void add_invader_laser(int page, int col)
-   {
-      int ii;
-      for(ii = 0; ii < MAX_LASER; ii++){
-         if(invader_lasers[ii].active == 0){
-            invader_lasers[ii].active = 1;
-            invader_lasers[ii].page = page;
-            invader_lasers[ii].col = col;
-            break;
-         }
-      }
-   }
-   void update_invader_lasers()
-   {
-      int ii;
-      for(ii = 0; ii < MAX_LASER; ii++){
-         if(invader_lasers[ii].active == 1){
-            screen[(invader_lasers[ii].page * 128) + invader_lasers[ii].col] = 0x00;
-            invader_lasers[ii].page++;
-            screen[(invader_lasers[ii].page * 128) + invader_lasers[ii].col] = 0xFF;
-            if(invader_lasers[ii].page > 7){
-               invader_lasers[ii].active = 0;
+                    }
+                }
+                if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2)) && lasers[ii].active == 1){
+                    unsigned long col_temp = lasers[ii].col;
+                    diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
+                    diff = diff * SPRITE_RATIO;
+                    diff = MAX_INVADERS/2 - (diff >> 16) - 1;
+                    if(invader_array[diff] == 1){
+                        invader_array[diff] = 0;
+                        lasers[ii].active = 0;
+                        player_score++;
+                        
+                    }
+                        
+                }
             }
-         }
-      }
-   }
-   void invader_laser(){
-      // Call random gen here
-      int random_pos = 1;
-      add_invader_laser((int)army_page_offset+1, (int)army_col_offset + (13 * random_pos)+5);
-   }
+        }
+    }
+}
+
+/*
+* Function: add_invdaer_laser
+* ----------------------------
+* Adds a laser to the invader laser array
+* given the page and col 
+* Globals:
+*   laser lasers: array of lasers
+*/
+void add_invader_laser(int page, int col)
+{
+	int ii;
+	for(ii = 0; ii < MAX_LASER; ii++){
+		if(invader_lasers[ii].active == 0){
+			invader_lasers[ii].active = 1;
+			invader_lasers[ii].page = page;
+			invader_lasers[ii].col = col;
+			break;
+		}
+	}
+}
+
+/*
+* Function: Update invader lasers position
+* ----------------------------
+* Updates the position of the invader lasers by incrementing
+* the page by 1 and leaving the col the same
+* Globals:
+*   laser lasers: array of lasers
+*/
+void update_invader_lasers()
+{
+	int ii;
+	for(ii = 0; ii < MAX_LASER; ii++){
+		if(invader_lasers[ii].active == 1){
+			screen[(invader_lasers[ii].page * 128) + invader_lasers[ii].col] = 0x00;
+			invader_lasers[ii].page++;
+			screen[(invader_lasers[ii].page * 128) + invader_lasers[ii].col] = 0xFF;
+			if(invader_lasers[ii].page > 7){
+				invader_lasers[ii].active = 0;
+			}
+		}
+	}
+}
+
+/*
+* Function: A function for the code to call to
+* run and functions associated with the invaders
+* lasers
+* ----------------------------
+* Updates the position of the invader lasers by incrementing
+* the page by 1 and leaving the col the same
+* Globals:
+*   laser lasers: array of lasers
+*   army_page_offset: the page offset of the army
+*   army_col_offset: the col offset of the army
+*/
+void invader_laser(){
+    int random_pos = 1;
+    add_invader_laser((int)army_page_offset+1, (int)army_col_offset + (13 * random_pos)+5);
+}
 
 
 

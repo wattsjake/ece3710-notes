@@ -11,7 +11,9 @@ ECE 3710 Embedded Systems Notes
 Link to TODO_
 
 
-ADD LINK TO README URL
+Checkout the ReadMe Here:
+
+https://ece3710-notes.readthedocs.io/en/latest/project.html
 
 Read the tutorial here:
 

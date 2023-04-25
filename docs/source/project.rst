@@ -117,20 +117,7 @@ Dependencies
 .. _dependencies:
 
 1. External 9v DC supply
-2. 64x128 pixel LCD
-3. Reset button, start button, fire button
-4. Potentiometer to control the position of the laser cannon
-5. Laser cannon with height of seven pixels and variable width of 7, 9, 11, or 13 pixels depending on the DIP switch
-6. Invaders with a height of 6-8 pixels and width of 10 pixels for front row and narrower for back row
-7. 4-digit score displayed continuously
-8. Initial wave of alien attackers when start button is pressed
-9. Display showing laser cannon and 2 rows of 8 alien space invaders on the left side of the screen at the beginning of each wave
-10. Invader formation moves to the right, fires lasers randomly, and reverses direction when reaching the side of the display
-11. Invaders move left or right one pixel at a time, with movement speed roughly inversely proportional to the number of invaders on the screen
-12. Display up to 8 simultaneous laser bursts from the invaders and up to 4 simultaneous laser bursts from the player's laser cannon
-13. New wave with aliens arrayed 8 pixels closer and increased movement speed when all invaders are destroyed
-14. Game over if a laser burst hits the laser cannon or if an invader reaches the bottom row, with "GAME OVER" displayed until the start button is pressed
-15. Sound generated for firing laser cannon, destroying an invader, or game over, with different sounds for each event and a maximum length of 250 milliseconds.
+
 
 Theory of Operation
 --------------------
@@ -149,28 +136,6 @@ Theory of Operation
 4. **Sound:** The sound block generates sound effects for the game, including the firing of the laser cannon and any other relevant sound effects.
 
 All of these functional blocks work together to create the game experience. The input interface provides the user with a way to interact with the game, the game logic implements the rules of the game and updates the game state, the graphics block generates the visual elements of the game, and the sound block adds auditory feedback to the gameplay. Together, these blocks create an immersive and engaging gaming experience for the player.
-
-Below is an image of the hardware of the game. The hardware consists of the following components:
-
-    .. image:: images/overview-8051-periferals.jpg
-        :width: 350
-        :height: 750
-        :alt: 8051 Periferals
-        :align: center
-
-Figure 2. 8051 Periferals
-
-
-1. Reset button
-2. JTAG connector for programming
-3. 5V power supply
-4. 8051 microcontroller
-5. NJM2113 audio amplifier
-6. 8 DIP switches
-7. Potentiometer
-8. Fire button
-9. 64x128 pixel LCD
-10. Start button
 
 
 Design Alternatives

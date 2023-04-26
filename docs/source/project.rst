@@ -843,10 +843,23 @@ Conclusion
 ==========
 .. _conclusion:
 
-This section summarizes test results makes observations about the performance and
-functionality (or lack thereof) of the design. Also, not every design is optimal. It is
-likely that you have acquired some insight along the way that will improve the design
-for next time. This section is a good place to put that kind of information. 
+Programming Space Invaders on an 8051 microcontroller is a challenging task, as the 8051 has limited resources and processing power compared to modern microcontrollers. The game requires precise timing and complex graphics rendering, which can be difficult to achieve on this platform.
+
+Despite these challenges, the results of the test showed that the Space Invaders game can be successfully programmed on an 8051 microcontroller with some limitations. The game's functionality was limited by the microcontroller's resources, and some features, such as sound effects and smooth animation, had to be sacrificed for the game to run smoothly.
+
+The game's performance was generally acceptable, although there were occasional frame drops and slowdowns during intense gameplay. Overall, the programming of Space Invaders on an 8051 microcontroller demonstrates the limitations and challenges of developing complex games on older microcontrollers with limited resources, but also highlights the importance of optimizing code and using clever programming techniques to overcome these limitations.
+
+There are several ways to optimize the Space Invaders game on an 8051 microcontroller to improve its performance and make it run faster. Some possible optimizations are:
+
+1. Reduce unnecessary calculations: One of the best ways to optimize the game is to reduce the number of unnecessary calculations performed during gameplay. For example, instead of recalculating the position of every sprite in every frame, we can use a lookup table to store precomputed values and update only the necessary ones.
+
+2. Use hardware acceleration: The 8051 microcontroller has limited resources, so we can use hardware acceleration to speed up the graphics rendering. For example, we can use a dedicated graphics chip or a display controller to offload some of the processing from the microcontroller.
+
+3. Optimize the memory usage: The 8051 has limited memory, so it is essential to optimize the memory usage to make the game run faster. For example, we can use dynamic memory allocation techniques to allocate memory only when needed and free it when no longer needed.
+
+4. Simplify the graphics: To reduce the processing time, we can simplify the graphics by reducing the number of colors and using simpler shapes. This can help to reduce the number of calculations needed for each frame and improve the game's performance.
+
+By implementing these optimizations, we can significantly improve the performance of the Space Invaders game on an 8051 microcontroller and make it run faster and smoother. However, it is essential to strike a balance between optimization and maintaining the game's functionality and visual appeal.
 
 
 

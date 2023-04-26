@@ -1597,6 +1597,8 @@ utils.c
    #include <interrupts.h>
    #include "invaders.h"
 
+   int invader_laser_delay = 8; //8 is the default speed
+   int baddy_laeser_counter = 0; //counter for the delay
 
    /*
    * Function: Detect a collision between a laser and the tank
@@ -1619,6 +1621,7 @@ utils.c
          if(page_temp > 6){
             if((col_temp < set_tank_pos + 5) && (col_temp > set_tank_pos - 5) && invader_lasers[ii].active == 1){
                player_lives--;
+               death_note_flag = 1;
                invader_lasers[ii].active = 0;
                break;
             }
@@ -1638,43 +1641,55 @@ utils.c
    *   laser lasers: array of lasers
    */
    void collision_detect(){
-      int SPRITE_RATIO = 5042;
-      int ii;
-      unsigned long diff;
-      unsigned long TEMP;
-      TEMP = 100;
-      collision_tank_detect();
-      for(ii = 0; ii < MAX_LASER; ii++){
-         if(lasers[ii].active){
-               if(lasers[ii].page <= 0){
-                  lasers[ii].active = 0;
-               }
-               else if(lasers[ii].page <= army_page_offset+1){
-                  // The following if statement checks if the laser is in the same column as the army
-                  if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2))){
-                     unsigned long col_temp = lasers[ii].col;
-                     diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
-                     diff = diff * SPRITE_RATIO;
-                     diff = MAX_INVADERS - (diff >> 16) - 1;
-                     if(invader_array[diff] == 1){
-                           invader_array[diff] = 0;
-                           lasers[ii].active = 0;
-                           player_score++;
-                           
-                     }
-                  }
-                  if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2)) && lasers[ii].active == 1){
-                     unsigned long col_temp = lasers[ii].col;
-                     diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
-                     diff = diff * SPRITE_RATIO;
-                     diff = MAX_INVADERS/2 - (diff >> 16) - 1;
-                     if(invader_array[diff] == 1){
-                           invader_array[diff] = 0;
-                           lasers[ii].active = 0;
-                           player_score++;
-                           
-                     }
-                           
+   int SPRITE_RATIO = 5042;
+   int ii;
+   int col_override;
+   unsigned long diff;
+   unsigned long TEMP;
+	TEMP = 100;
+	collision_tank_detect();
+    for(ii = 0; ii < MAX_LASER; ii++){
+        if(lasers[ii].active){
+            if(lasers[ii].page <= 0){
+                lasers[ii].active = 0;
+            }
+            else if(lasers[ii].page <= army_page_offset+1){
+				if (army_col_offset < 0){
+					col_override = 1;
+				}else{
+					col_override = 0;
+				}
+                if(((lasers[ii].col > army_col_offset) || col_override == 1) && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2))){
+                    //if(lasers[ii].page == lowest_active_sprite){ // The laser is at the same page as an active sprite. Next check for col.
+                        unsigned long col_temp = lasers[ii].col;
+						diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
+                        diff = diff * SPRITE_RATIO;
+                        diff = MAX_INVADERS - (diff >> 16) - 1;
+                        if(invader_array[diff] >= 1){
+                            invader_array[diff] = 0;
+                            lasers[ii].active = 0;
+							player_score = player_score + 50;
+							invaders_alive--;
+							invader_death_flag = 1; //set flag for sound
+							
+                        }
+                }
+
+                if(lasers[ii].col > army_col_offset && lasers[ii].col < army_col_offset + (13 * (MAX_INVADERS/2)) && lasers[ii].active == 1){
+                        //if(lasers[ii].page == lowest_active_sprite){ // The laser is at the same page as an active sprite. Next check for col.
+                            unsigned long col_temp = lasers[ii].col;
+                            diff = (army_col_offset + (13 * (MAX_INVADERS/2)) - col_temp);
+                            diff = diff * SPRITE_RATIO;
+                            diff = MAX_INVADERS/2 - (diff >> 16) - 1;
+                            if(invader_array[diff] >= 1){
+                                invader_array[diff] = 0;
+                                lasers[ii].active = 0;
+								player_score = player_score + 50;
+								invaders_alive--;
+								invader_death_flag = 1; //set flag for sound
+                                
+                            }
+                        
                   }
                }
          }
@@ -1692,14 +1707,23 @@ utils.c
    void add_invader_laser(int page, int col)
    {
       int ii;
-      for(ii = 0; ii < MAX_LASER; ii++){
-         if(invader_lasers[ii].active == 0){
-            invader_lasers[ii].active = 1;
-            invader_lasers[ii].page = page;
-            invader_lasers[ii].col = col;
-            break;
+      
+      if(baddy_laeser_counter == invader_laser_delay){
+         baddy_laeser_counter = 0;
+         for(ii = 0; ii < MAX_LASER; ii++){
+            if(invader_lasers[ii].active == 0){
+               invader_lasers[ii].active = 1;
+               invader_lasers[ii].page = page;
+               invader_lasers[ii].col = col;
+               invaders_laser_flag = 1; //set bit for fire sound from invaders
+               break;
+            }
+            
          }
+      }else{
+         baddy_laeser_counter++;
       }
+      
    }
 
    /*
@@ -1738,8 +1762,9 @@ utils.c
    *   army_col_offset: the col offset of the army
    */
    void invader_laser(){
-      int random_pos = 1;
-      add_invader_laser((int)army_page_offset+1, (int)army_col_offset + (13 * random_pos)+5);
+      int new_laser_col = (int)army_col_offset + (invader_left_dead * 13) + ((random_pos)*13);
+      add_invader_laser((int)army_page_offset+1, new_laser_col);
+
    }
 
 
